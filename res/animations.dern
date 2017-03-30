@@ -1,0 +1,8 @@
+(animation-entity-define [player-idle]          0)
+(animation-entity-define [exit-idle]            1)
+(animation-entity-define [stopper-idle]         2)
+(animation-entity-define [pullable-ensw-idle]   3)
+(animation-entity-define [wall-idle]           18)
+;(animation-entity-define [wall-idle]          32 32 33 33 34 34)
+
+

@@ -1,0 +1,435 @@
+(define level [level] '())
+(define level-width  [level-width] 32)
+(define level-hwidth [level half width] (to-integer (* level-width 0.5)))
+(define level-current-number [current level number] nil)
+
+(for i from 0 to (* level-width level-width) (+= level []))
+
+(define player-x   [player-x]   0)
+(define player-y   [player-y]   0)
+(define player-dir [player-dir] nil)
+
+(define level-reset [clear level] '() (fn ()
+    (animation-entity-remove-all)
+    (= pending-input '())
+    (= player-x   0)
+    (= player-y   0)
+    (= player-dir nil)
+    (= level '())
+    (= current-pullable-x nil)
+    (= current-pullable-y nil)
+    (= current-pullable-id [])
+    (for i from 0 to (* level-width level-width) (+= level []))))
+
+(define coordinates-to-index [...] '(x [x] y [y]) (fn (x y)
+    (+ (+ x level-hwidth) (* (+ y level-hwidth) level-width))))
+
+(define level-set [level-set] '(x [x] y [y] entity [entity]) (fn (x y entity)
+    (= level (coordinates-to-index x y) entity)))
+
+(define level-get [level-get] '(x [x] y [y]) (fn (x y)
+    (nth (coordinates-to-index x y) level)))
+
+(define are-coordinates-out-of-level [check if coordinates are outside level area] '(x [x] y [y]) (fn (x y)
+    (define result [result] false)
+    (if (< x (- level-hwidth))       (do (= result true)))
+    (if (>= x level-hwidth)          (do (= result true)))
+    (if (< y (- level-hwidth))       (do (= result true)))
+    (if (>= y level-hwidth)          (do (= result true)))
+    result))
+
+(define current-pullable-x                  [current pullable x] nil)
+(define current-pullable-y                  [current pullable y] nil)
+(define current-pullable-player-was-on-side [is player above, below, right or left side] nil)
+(define current-pullable-id                 [current pullable id or empty string] [])
+
+(define dir-to-side [dir-to-side] '(dir [dir]) (fn (dir)
+    (if (== dir [u])
+        (return [d]))
+
+    (if (== dir [d])
+        (return [u]))
+
+    (if (== dir [l])
+        (return [r]))
+
+    (if (== dir [r])
+        (return [l]))
+
+    nil))
+
+(define coords-to-side [coords-to-side] '(ex [ex] ey [ey] px [px] py [py]) (fn (ex ey px py)
+    ; TODO XXX check this implementation, it is written very fast and not checked!
+    (if (== ex px)
+        (if (== ey py) (return nil) (if (> ey py) (return [d]) (return [u]))))
+
+    (if (== ey py)
+        (if (== ex px) (return nil) (if (> ex px) (return [r]) (return [l]))))
+
+    nil))
+
+(define on-collision [on-collision] '(tx [tx] ty [ty] dir [player's direction]) (fn (tx ty dir)
+    (define name [name] (level-get tx ty))
+
+    (define side [on which side is player of the target] (dir-to-side dir))
+
+    ; TODO name must be fixed to be exit-x-y and here we must use some
+    ; simple regexp-style matching or starts-with? Those must be implemented...
+    (if (starts-with? name [exit]    ) (do (= current-state [tweenOut]) (tween-level-out)))
+
+    (define pid [pid] current-pullable-id)
+
+    (if (starts-with? name [pullable]) (do 
+                                           (set-current-pullable-data tx ty name)
+                                           (= current-pullable-player-was-on-side side)))))
+
+(define move-pullable-from-to [move pullable] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
+
+        (if (== current-pullable-id []) (return nil))
+        ; aborts here
+        (if (!= current-pullable-id (level-get fx fy)) (abort [should not happen! AA]))
+
+        (if (not (starts-with? (level-get fx fy) [pullable-ensw])) (abort [pullable ensw expected]))
+
+        (if (== [] (level-get tx ty))
+            (do (level-set fx fy [])
+                (level-set tx ty current-pullable-id)
+                (animation-entity-set-position current-pullable-id (vector (* 16 tx) (* 16 ty) 0))
+                (set-current-pullable-data tx ty current-pullable-id)))))
+
+(define move-pullable-up [...] '() (fn ()
+    (move-pullable-from-to
+        current-pullable-x
+        current-pullable-y
+        current-pullable-x
+        (- current-pullable-y 1))))
+
+(define move-pullable-down [...] '() (fn ()
+    (move-pullable-from-to
+        current-pullable-x
+        current-pullable-y
+        current-pullable-x
+        (+ current-pullable-y 1))))
+
+(define move-pullable-left [...] '() (fn ()
+    (move-pullable-from-to
+        current-pullable-x
+        current-pullable-y
+        (- current-pullable-x 1)
+        current-pullable-y)))
+
+(define move-pullable-right [...] '() (fn ()
+    (move-pullable-from-to
+        current-pullable-x
+        current-pullable-y
+        (+ current-pullable-x 1)
+        current-pullable-y )))
+
+(define reverse-side [...] '(side [side to reverse]) (fn (side)
+    (if (== [u] side) (return [d]))
+    (if (== [d] side) (return [u]))
+    (if (== [l] side) (return [r]))
+    (if (== [r] side) (return [l]))))
+
+(define set-current-pullable-data [...] '(x [x] y [y] id [id]) (fn (x y id)
+    (= current-pullable-x  x)
+    (= current-pullable-y  y)
+    (= current-pullable-id id)))
+
+(define update-possible-pullable [...] '() (fn ()
+    (if (== current-pullable-x  nil) (return nil))
+    (if (== current-pullable-y  nil) (return nil))
+    (if (== current-pullable-id  []) (return nil))
+
+    (define currentSide [current side]
+        (coords-to-side current-pullable-x current-pullable-y player-x player-y))
+
+    (= currentSide (reverse-side currentSide))
+
+    (define pid [pid] current-pullable-id)
+    (define px  [px]  current-pullable-x)
+    (define py  [py]  current-pullable-y)
+
+    (if (== (uid current-pullable-id) (uid (level-get px py))) (abort [should not happen]))
+
+    (if (!= current-pullable-id (level-get px py)) (abort [should not happen!]))
+
+    (if (!= currentSide current-pullable-player-was-on-side)
+        (do (set-current-pullable-data nil nil []) (return nil)))
+
+    (if (== currentSide [u]) (do (move-pullable-up)    (return nil)))
+    (if (== currentSide [d]) (do (move-pullable-down)  (return nil)))
+    (if (== currentSide [l]) (do (move-pullable-left)  (return nil)))
+    (if (== currentSide [r]) (do (move-pullable-right) (return nil)))))
+
+(define move-player-from-to [move player] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
+    (define playerId [player id] (level-get fx fy))
+    (if (not (starts-with? playerId [player])) (abort [xxxx]))
+
+    (if (are-coordinates-out-of-level tx ty)
+        (level-restart)
+        (if (== [] (level-get tx ty))
+            (do (level-set fx fy [])
+                (level-set tx ty playerId)
+                (animation-entity-set-position playerId (vector (* 16 tx) (* 16 ty) 0))
+                (= player-x tx)
+                (= player-y ty))
+         (do
+            (define tmpDir [tmpDir] player-dir)
+            (= player-dir nil)
+            (on-collision tx ty tmpDir))))
+    (update-possible-pullable)))
+
+(define entity-new-player [entity-new-player] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [player-{}-{}] x y))
+     (animation-entity-new id [player-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)
+     (= player-x x)
+     (= player-y y)))
+
+(define entity-new-wall [entity-new-wall] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [wall-{}-{}] x y))
+     (animation-entity-new id [wall-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
+(define entity-new-exit [entity-new-exit] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [exit-{}-{}] x y))
+     (animation-entity-new id [exit-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
+(define entity-new-pullable-ensw [Add entity that can be pulled to up, down, left and right]
+    '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+
+     (define id [id] (string-format [pullable-ensw-{}-{}] x y))
+
+     (animation-entity-new  id [pullable-ensw-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
+(define entity-new-stopper [entity-new-stopper] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (animation-entity-new (string-format [stopper-{}-{}] x y) [stopper-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y [stopper])))
+
+(define level-1 [level-1] '() (fn ()
+    (entity-new-player      -2 0)
+    (entity-new-exit         2 0)
+    (= level-current-number 1)))
+
+(define level-2 [level-2] '() (fn ()
+    ; top row
+    (for i from -8 to 0 (entity-new-wall i -6))
+
+    ; next row
+    (entity-new-wall   -8 -5)
+    (entity-new-player -7 -5)
+    (for i from 0 to 7 (entity-new-wall  i -5))
+
+    ; Third row from top
+    (entity-new-wall -8 -4)
+    (entity-new-wall  7 -4)
+
+    ; Fourth row from top
+    (entity-new-wall -8 -3)
+    (entity-new-pullable-ensw 6 -3)
+    (entity-new-wall  7 -3)
+
+    ; Fifth
+    (entity-new-wall -8 -2)
+    (entity-new-wall -5 -2)
+    (entity-new-wall -4 -2)
+    (for i from -3 to -1 (entity-new-pullable-ensw i -2))
+    (entity-new-wall 0 -2)
+    (entity-new-wall 1 -2)
+    (entity-new-pullable-ensw 2 -2)
+    (entity-new-wall 3 -2)
+    (entity-new-wall 4 -2)
+    (entity-new-wall 7 -2)
+
+    ; Sixth
+    (entity-new-wall -8 -1)
+    (entity-new-wall -5 -1)
+    (entity-new-wall -4 -1)
+    (entity-new-pullable-ensw -3 -1)
+    (entity-new-pullable-ensw -2 -1)
+    (for i from -1 to 1 (entity-new-wall i -1))
+    (entity-new-pullable-ensw 2 -1)
+    (entity-new-wall 3 -1)
+    (entity-new-wall 4 -1)
+    (entity-new-wall 7 -1)
+
+    ; Seventh
+    (entity-new-wall -8 0)
+    (entity-new-wall -5 0)
+    (entity-new-wall -4 0)
+    (for i from -3 to 2 (entity-new-pullable-ensw i 0))
+    (entity-new-wall 3 0)
+    (entity-new-wall 4 0)
+    (entity-new-wall 7 0)
+
+    ; Eight
+    (entity-new-wall -8 1)
+    (entity-new-wall -5 1)
+    (entity-new-wall -4 1)
+    (entity-new-pullable-ensw -3 1)
+    (entity-new-pullable-ensw -2 1)
+
+    (entity-new-exit  0 1)
+
+    (entity-new-pullable-ensw 2 1)
+    (entity-new-wall 3 1)
+    (entity-new-wall 4 1)
+    (entity-new-wall 7 1)
+
+    ; Ninth
+    (entity-new-wall -8 2)
+    (entity-new-wall -5 2)
+    (entity-new-wall -4 2)
+    (entity-new-pullable-ensw -3 2)
+    (entity-new-pullable-ensw -2 2)
+    (for i from -1 to 1 (entity-new-wall i 2))
+    (entity-new-pullable-ensw 2 2)
+    (entity-new-wall 3 2)
+    (entity-new-wall 4 2)
+    (entity-new-wall 7 2)
+
+    ; Tenth
+    (entity-new-wall -8 3)
+    (entity-new-pullable-ensw  6 3)
+    (entity-new-wall  7 3)
+
+    ; Eleventh
+    (entity-new-wall -8 4)
+    (entity-new-wall -7 4)
+    (entity-new-wall  7 4)
+
+    ; Bottom row
+    (for i from -7 to 7 (entity-new-wall i 5))
+
+    (= level-current-number 2)))
+
+(define level-restart [restart level] '() (fn ()
+    (level-reset)
+
+    ; implement 'select' and use it here. these if's
+    ; without else will not work without the temp variable
+    (define lnum [level number before change] level-current-number)
+
+    (if (== 1 lnum) (level-1))
+    (if (== 2 lnum) (level-2))
+
+    (shake)))
+
+(define level-next [next level] '() (fn ()
+    (level-reset)
+
+    ; implement 'select' and use it here. these if's
+    ; without else will not work without the temp variable
+
+    (define lnum [level number before change] level-current-number)
+
+    (if (== 1 lnum) (level-2))
+    (if (== 2 lnum) (level-1))))
+
+(define current-state [current-state] [game])
+(define pending-input [pending input that is not yet handled] '())
+
+(define pop-input [pop input] '() (fn ()
+
+    (define result [result] [])
+
+    (if (!= 0 (len pending-input))
+        (do
+            (= result (nth 0 pending-input))
+            (pop-front pending-input)))
+
+    result))
+
+(define printlevel [printlevel] false)
+
+(define state-update-game [state-update]
+                     '(dt [delta time]
+                       input [string telling the input, if any: u, d, l, r]) (fn (dt input)
+
+    (if (== input [restart])  (do (= input []) (level-restart)))
+    (if (== input [action 1]) (do (= input []) (= printlevel (not printlevel))))
+
+    (if (!= input []) (+= pending-input input))
+
+    (if (== player-dir nil)
+        (do
+            (= input (pop-input))
+            (if (== input [up])       (= player-dir [u]))
+            (if (== input [down])     (= player-dir [d]))
+            (if (== input [left])     (= player-dir [l]))
+            (if (== input [right])    (= player-dir [r]))))
+
+    (if (== player-dir [u]) (move-player-from-to player-x player-y    player-x    (- player-y 1)))
+    (if (== player-dir [d]) (move-player-from-to player-x player-y    player-x    (+ player-y 1)))
+    (if (== player-dir [l]) (move-player-from-to player-x player-y (- player-x 1)    player-y))
+    (if (== player-dir [r]) (move-player-from-to player-x player-y (+ player-x 1)    player-y))
+
+    true))
+
+(define state-update-tween-out [state-update]
+                     '(dt [delta time]
+                       input [string telling the input, if any: u, d, l, r]) (fn (dt input)
+    true))
+
+(define state-update [state-update]
+                     '(dt [delta time]
+                       input [string telling the input, if any: u, d, l, r]) (fn (dt input)
+
+    (define tmpState [tmpState] current-state)
+
+    (if (== [game]     tmpState) (state-update-game      dt input))
+    (if (== [tweenOut] tmpState) (state-update-tween-out dt input))
+
+    ;(if printlevel (level-print))
+
+    true))
+
+
+(define state-on-tween-out-done [...] '() (fn ()
+    (level-next)))
+
+(define state-on-tween-in-done [...] '() (fn ()
+
+    (= current-state [game])))
+
+; Game starts here
+(level-1)
+
+
+;;; Here are some helper functions for debugging purposes.
+;;; Can be removed later
+
+(define level-print-slot [...] '(x [x] y [y]) (fn (x y)
+    (define name [name] (level-get x y))
+    (if (== [] name)                     (do (print [ ]) (return nil)))
+    (if (starts-with? name [exit])       (do (print [E]) (return nil)))
+    (if (starts-with? name [player])     (do (print [o]) (return nil)))
+    (if (starts-with? name [wall])       (do (print [X]) (return nil)))
+    (if (starts-with? name [pullable])   (do (print [P]) (return nil)))
+    (print name)))
+
+(define level-print-row [...] '(y [y]) (fn (y)
+    (for x from (- level-hwidth) to (- level-hwidth 1) (level-print-slot x y))
+    (println [])))
+
+(define level-print [...] '() (fn ()
+    (for y from (- level-hwidth) to (- level-hwidth 1) (level-print-row y))))
+
+
+(define level-print-slot-id [...] '(x [x] y [y]) (fn (x y)
+    (define name [name] (level-get x y))
+    (print name)
+
+    (define spaces [...] (- 18 (len name)))
+    (for i from 0 to spaces (print [ ]))))
+
+(define level-print-row-id [...] '(y [y]) (fn (y)
+    (for x from (- level-hwidth) to (- level-hwidth 1) (level-print-slot-id x y))
+    (println [])))
+
+(define level-print-id [...] '() (fn ()
+    (for y from (- level-hwidth) to (- level-hwidth 1) (level-print-row-id y))))
+

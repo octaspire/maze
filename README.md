@@ -12,3 +12,14 @@ cmake ..
 make
 ```
 
+To run the unit tests:
+
+```shell
+test/octaspire-maze-test-runner
+```
+
+To start the game:
+
+```shell
+./octaspire-maze
+```

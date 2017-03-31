@@ -85,9 +85,6 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_new(
 
     octaspire_dern_vm_push_value(vm, arguments);
 
-
-
-
     // Name
     octaspire_dern_value_t * const animNameVal =
         octaspire_dern_value_as_vector_get_element_at(
@@ -1121,7 +1118,6 @@ bool octaspire_maze_state_remove_named_animation(
     octaspire_maze_state_t * const self,
     char const * const name)
 {
-    printf("REMOVING ANIM \"%s\"\n", name);
     octaspire_container_utf8_string_t * const key =
         octaspire_container_utf8_string_new(name, self->allocator);
 

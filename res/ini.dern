@@ -8,6 +8,7 @@
 (define player-x   [player-x]   0)
 (define player-y   [player-y]   0)
 (define player-dir [player-dir] nil)
+(define entity-attributes [properties for entities] (hash-map))
 
 (define level-reset [clear level] '() (fn ()
     (animation-entity-remove-all)
@@ -19,6 +20,7 @@
     (= current-pullable-x nil)
     (= current-pullable-y nil)
     (= current-pullable-id [])
+    (= entity-attributes (hash-map))
     (for i from 0 to (* level-width level-width) (+= level []))))
 
 (define coordinates-to-index [...] '(x [x] y [y]) (fn (x y)
@@ -68,6 +70,21 @@
 
     nil))
 
+(define stop-counter-remove [remove the named stop counter at the given coordinates] '(name [name] x [x] y [y]) (fn (name x y)
+    (level-set x y [])
+    (animation-entity-remove name)
+    nil))
+
+(define stop-counter-on-collision [should be called when stop counter has collision with player] '(name [counter's name] x [counter's x] y [counter's y]) (fn (name x y)
+        (define count [count before collision] (find entity-attributes name))
+        (if (== count 1) (do (stop-counter-remove name x y) (return nil)))
+        (define animationName [name of the animation] (string-format [stop-counter-{}] count))
+        (animation-entity-remove name)
+        (-= count 1)
+        (define animationName [name of the animation] (string-format [stop-counter-{}] count))
+        (animation-entity-new name animationName '((* 16 x) (* 16 y) 0))
+        (= entity-attributes name count)))
+
 (define on-collision [on-collision] '(tx [tx] ty [ty] dir [player's direction]) (fn (tx ty dir)
     (define name [name] (level-get tx ty))
 
@@ -81,7 +98,9 @@
 
     (if (starts-with? name [pullable]) (do 
                                            (set-current-pullable-data tx ty name)
-                                           (= current-pullable-player-was-on-side side)))))
+                                           (= current-pullable-player-was-on-side side)))
+
+    (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))))
 
 (define move-pullable-from-to [move pullable] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
 
@@ -205,13 +224,16 @@
      (animation-entity-new  id [pullable-ensw-idle] '((* 16 x) (* 16 y) 0))
      (level-set x y id)))
 
-(define entity-new-stopper [entity-new-stopper] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
-     (animation-entity-new (string-format [stopper-{}-{}] x y) [stopper-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y [stopper])))
+(define entity-new-stop-counter [entity-new-stop-counter] '(x [x-coordinate] y [y-coordinate] count [current count]) (fn (x y count)
+     (define id [id] (string-format [stop-counter-{}-{}] x y))
+     (animation-entity-new id (string-format [stop-counter-{}] count) '((* 16 x) (* 16 y) 0))
+     (+= entity-attributes id count)
+     (level-set x y id)))
 
 (define level-1 [level-1] '() (fn ()
-    (entity-new-player      -2 0)
-    (entity-new-exit         2 0)
+    (entity-new-player       -2  0)
+    (entity-new-exit          2  0)
+    (entity-new-stop-counter -2 -2 10)
     (= level-current-number 1)))
 
 (define level-2 [level-2] '() (fn ()

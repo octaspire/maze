@@ -39,7 +39,7 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
         assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
-            "Special 'animation-entity-define' expects at least two arguments. %zu arguments were given.",
+            "Builtin 'animation-entity-define' expects at least two arguments. %zu arguments were given.",
             octaspire_dern_value_get_length(arguments));
     }
 
@@ -64,12 +64,10 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
         assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
-            "First argument to special 'animation-entity-define' must be string value. "
+            "First argument to builtin 'animation-entity-define' must be string value. "
             "Now it has type %s.",
             octaspire_dern_value_helper_get_type_as_c_string(animNameVal->typeTag));
     }
-
-    printf("define animation \"%s\"\n", octaspire_container_utf8_string_get_c_string(animNameVal->value.string));
 
     octaspire_sdl2_animation_t *animation = octaspire_sdl2_animation_new(
         octaspire_container_utf8_string_get_c_string(animNameVal->value.string),
@@ -110,7 +108,7 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
             assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
-                "%zuth argument to special 'animation-enity-define' must be integer value. "
+                "%zuth argument to builtin 'animation-enity-define' must be integer value. "
                 "Now it has type %s.",
                 i + 1,
                 octaspire_dern_value_helper_get_type_as_c_string(indexVal->typeTag));
@@ -130,7 +128,6 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
     }
 
     assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
-    octaspire_sdl2_animation_print(animation);
     return octaspire_dern_vm_get_value_true(vm);
 }
 
@@ -224,8 +221,7 @@ int main(void)
 
     octaspire_sdl2_texture_print(texture);
 
-    // TODO XXX make this builtin, there is no need for it to be special anymore!
-    if (!octaspire_dern_vm_create_and_register_new_special(
+    if (!octaspire_dern_vm_create_and_register_new_builtin(
         vm,
         "animation-entity-define",
         octaspire_maze_api_animation_entity_define,
@@ -236,12 +232,18 @@ int main(void)
         abort();
     }
 
+    octaspire_dern_value_t *resultVal =
+        octaspire_dern_vm_read_from_buffer_and_eval_in_global_environment(
+            vm,
+            octaspire_maze_animations,
+            octaspire_maze_animations_len);
 
+    if (resultVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+    {
+        octaspire_dern_value_print(resultVal, octaspire_dern_vm_get_allocator(vm));
+        abort();
+    }
 
-    octaspire_dern_vm_read_from_buffer_and_eval_in_global_environment(
-        vm,
-        octaspire_maze_animations,
-        octaspire_maze_animations_len);
     /*
     SDL_Rect rect;
 

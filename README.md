@@ -1,6 +1,6 @@
 Game written in programming languages Dern and standard C99
 
-To build on Raspberry Pi:
+To build on Raspberry Pi or Debian:
 
 ```shell
 sudo apt-get install cmake git libsdl2-dev libsdl2-image-dev

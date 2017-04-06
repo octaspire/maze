@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.7)
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/")
 file(GLOB SOURCES "*.c")
 include_directories(${OCTASPIRE_DERN_INCLUDE_DIR})

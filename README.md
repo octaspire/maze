@@ -23,3 +23,6 @@ To start the game:
 ```shell
 ./octaspire-maze
 ```
+If you want to know more about Octaspire Dern, the language manual can be found from here:
+[http://www.octaspire.com/dern](http://www.octaspire.com/dern)
+

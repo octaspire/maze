@@ -2,6 +2,8 @@
 (define level-width  [level-width] 32)
 (define level-hwidth [level half width] (to-integer (* level-width 0.5)))
 (define level-current-number [current level number] nil)
+(define level-number-of-keys  [How many keys current level had when it started] 0)
+(define player-number-of-keys [How many keys player has collected on current level] 0)
 
 (for i from 0 to (* level-width level-width) (+= level []))
 
@@ -21,6 +23,8 @@
     (= current-pullable-y nil)
     (= current-pullable-id [])
     (= entity-attributes (hash-map))
+    (= level-number-of-keys 0)
+    (= player-number-of-keys 0)
     (for i from 0 to (* level-width level-width) (+= level []))))
 
 (define coordinates-to-index [...] '(x [x] y [y]) (fn (x y)
@@ -85,6 +89,17 @@
         (animation-entity-new name animationName '((* 16 x) (* 16 y) 0))
         (= entity-attributes name count)))
 
+(define key-on-collision [should be called when key has collision with player] '(name [key's name] x [key's x] y [key's y]) (fn (name x y)
+        (level-set x y [])
+        (animation-entity-remove name)
+        (++ player-number-of-keys)))
+
+(define pass-or-fail-level [Move to next level or restart current] '() (fn ()
+    (if (< player-number-of-keys level-number-of-keys) (do (level-restart) (return nil)))
+
+    ; Level is passed
+    (do (= current-state [tweenOut]) (tween-level-out))))
+
 (define on-collision [on-collision] '(tx [tx] ty [ty] dir [player's direction]) (fn (tx ty dir)
     (define name [name] (level-get tx ty))
 
@@ -92,7 +107,7 @@
 
     ; TODO name must be fixed to be exit-x-y and here we must use some
     ; simple regexp-style matching or starts-with? Those must be implemented...
-    (if (starts-with? name [exit]    ) (do (= current-state [tweenOut]) (tween-level-out)))
+    (if (starts-with? name [exit]    ) (pass-or-fail-level))
 
     (define pid [pid] current-pullable-id)
 
@@ -100,7 +115,8 @@
                                            (set-current-pullable-data tx ty name)
                                            (= current-pullable-player-was-on-side side)))
 
-    (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))))
+    (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))
+    (if (starts-with? name [key])          (do (key-on-collision name tx ty) (= player-dir dir)))))
 
 (define move-pullable-from-to [move pullable] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
 
@@ -230,10 +246,65 @@
      (+= entity-attributes id count)
      (level-set x y id)))
 
+(define entity-new-key [Create new key] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [key-{}-{}] x y))
+     (animation-entity-new id [key-idle] '((* 16 x) (* 16 y) 0))
+     (++ level-number-of-keys)
+     (level-set x y id)))
+
 (define level-1 [level-1] '() (fn ()
-    (entity-new-player       -2  0)
-    (entity-new-exit          2  0)
-    (entity-new-stop-counter -2 -2 10)
+
+    ; Top row
+    (entity-new-wall          0 -5)
+    (entity-new-stop-counter  2 -5 1)
+
+    ; 2. row
+    (entity-new-stop-counter -4 -4 1)
+    (entity-new-stop-counter  4 -4 1)
+
+    ; 3. row
+    (entity-new-wall         -1 -3)
+    (entity-new-wall          1 -3)
+
+    ; 4. row
+    (entity-new-stop-counter -5 -2 1)
+    (entity-new-key          -2 -2)
+    (entity-new-wall         -1 -2)
+    (entity-new-wall          1 -2)
+    (entity-new-key           2 -2)
+
+    ; 5. row
+    (for i from -3 to -1 (entity-new-wall i -1))
+    (for i from  1 to  3 (entity-new-wall i -1))
+
+    ; 6. row
+    (entity-new-wall         -5 0)
+    (entity-new-player        0 0)
+    (entity-new-wall          5 0)
+
+    ; 7. row
+    (for i from -3 to -1 (entity-new-wall i 1))
+    (for i from  1 to  3 (entity-new-wall i 1))
+
+    ; 8. row
+    (entity-new-stop-counter  5  2 1)
+    (entity-new-key          -2  2)
+    (entity-new-wall         -1  2)
+    (entity-new-wall          1  2)
+    (entity-new-key           2  2)
+
+    ; 9. row
+    (entity-new-wall         -1  3)
+    (entity-new-wall          1  3)
+
+    ; 10. row
+    (entity-new-stop-counter -4  4 1)
+    (entity-new-stop-counter  4  4 1)
+
+    ; Last row
+    (entity-new-exit         -4  5)
+    (entity-new-stop-counter -2  5 1)
+    (entity-new-wall          0  5)
     (= level-current-number 1)))
 
 (define level-2 [level-2] '() (fn ()

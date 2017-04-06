@@ -3,6 +3,7 @@
 (animation-entity-define [stopper-idle]         2)
 (animation-entity-define [pullable-ensw-idle]   3)
 (animation-entity-define [wall-idle]           18)
+(animation-entity-define [key-idle]           432)
 
 
 (define create-stop-counter-i [.] '(i [i]) (fn (i)

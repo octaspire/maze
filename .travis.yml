@@ -4,6 +4,10 @@ compiler:
     - clang
     - gcc
 
+before_install:
+    - sudo add-apt-repository -y ppa:team-xbmc/ppa
+    - sudo apt-get update -qq
+
 install:
     - sudo apt-get install libsdl2-dev libsdl2-image-dev
 

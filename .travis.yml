@@ -10,7 +10,6 @@ before_install:
     - sudo apt-get install libsdl2-dev libsdl2-image-dev -y
 
 before_script:
-    - mkdir build
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=Debug -DOCTASPIRE_MAZE_COVERAGE:BOOL=ON ..
 

@@ -1,10 +1,10 @@
 [submodule "external/octaspire_dern"]
 	path = external/octaspire_dern
-    url = https://gitlab.com/octaspire/dern.git
+    url = https://github.com/octaspire/dern.git
     branch = master
     ignore = dirty
 [submodule "external/octaspire_core"]
 	path = external/octaspire_core
-    url = https://gitlab.com/octaspire/core.git
+    url = https://github.com/octaspire/core.git
     branch = master
     ignore = dirty

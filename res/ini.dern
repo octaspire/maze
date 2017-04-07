@@ -94,6 +94,66 @@
         (animation-entity-remove name)
         (++ player-number-of-keys)))
 
+(define turnstile-ew-on-collision [should be called when turnstile-ew has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
+
+        (define fx [fx] (+ x 1))
+        (define fy [fy] y)
+
+        (if (!= fx player-x) (return nil))
+        (if (!= fy player-y) (return nil))
+
+        (define tx [tx] (- x 1))
+        (define ty [ty] y)
+
+        (move-player-from-to fx fy tx ty)
+        (= player-dir pdir)
+        ))
+
+(define turnstile-we-on-collision [should be called when turnstile-we has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
+
+        (define fx [fx] (- x 1))
+        (define fy [fy] y)
+
+        (if (!= fx player-x) (return nil))
+        (if (!= fy player-y) (return nil))
+
+        (define tx [tx] (+ x 1))
+        (define ty [ty] y)
+
+        (move-player-from-to fx fy tx ty)
+        (= player-dir pdir)
+        ))
+
+(define turnstile-sn-on-collision [should be called when turnstile-sn has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
+
+        (define fx [fx] x)
+        (define fy [fy] (+ y 1))
+
+        (if (!= fx player-x) (return nil))
+        (if (!= fy player-y) (return nil))
+
+        (define tx [tx] x)
+        (define ty [ty] (- y 1))
+
+        (move-player-from-to fx fy tx ty)
+        (= player-dir pdir)
+        ))
+
+(define turnstile-ns-on-collision [should be called when turnstile-ns has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
+
+        (define fx [fx] x)
+        (define fy [fy] (- y 1))
+
+        (if (!= fx player-x) (return nil))
+        (if (!= fy player-y) (return nil))
+
+        (define tx [tx] x)
+        (define ty [ty] (+ y 1))
+
+        (move-player-from-to fx fy tx ty)
+        (= player-dir pdir)
+        ))
+
 (define pass-or-fail-level [Move to next level or restart current] '() (fn ()
     (if (< player-number-of-keys level-number-of-keys) (do (level-restart) (return nil)))
 
@@ -116,7 +176,12 @@
                                            (= current-pullable-player-was-on-side side)))
 
     (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))
-    (if (starts-with? name [key])          (do (key-on-collision name tx ty) (= player-dir dir)))))
+    (if (starts-with? name [key])          (do (key-on-collision name tx ty) (= player-dir dir)))
+    (if (starts-with? name [turnstile-ew]) (turnstile-ew-on-collision name tx ty dir))
+    (if (starts-with? name [turnstile-we]) (turnstile-we-on-collision name tx ty dir))
+    (if (starts-with? name [turnstile-sn]) (turnstile-sn-on-collision name tx ty dir))
+    (if (starts-with? name [turnstile-ns]) (turnstile-ns-on-collision name tx ty dir))
+    ))
 
 (define move-pullable-from-to [move pullable] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
 
@@ -227,6 +292,26 @@
      (animation-entity-new id [wall-idle] '((* 16 x) (* 16 y) 0))
      (level-set x y id)))
 
+(define entity-new-turnstile-ew [entity-new-turnstile-ew] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [turnstile-ew-{}-{}] x y))
+     (animation-entity-new id [turnstile-ew-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
+(define entity-new-turnstile-we [entity-new-turnstile-we] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [turnstile-we-{}-{}] x y))
+     (animation-entity-new id [turnstile-we-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
+(define entity-new-turnstile-sn [entity-new-turnstile-sn] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [turnstile-sn-{}-{}] x y))
+     (animation-entity-new id [turnstile-sn-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
+(define entity-new-turnstile-ns [entity-new-turnstile-ns] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [turnstile-ns-{}-{}] x y))
+     (animation-entity-new id [turnstile-ns-idle] '((* 16 x) (* 16 y) 0))
+     (level-set x y id)))
+
 (define entity-new-exit [entity-new-exit] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [exit-{}-{}] x y))
      (animation-entity-new id [exit-idle] '((* 16 x) (* 16 y) 0))
@@ -308,6 +393,46 @@
     (= level-current-number 1)))
 
 (define level-2 [level-2] '() (fn ()
+
+    ; Top row
+    (entity-new-exit         -5 0)
+    (entity-new-player        5 0)
+    (entity-new-turnstile-ew  0 0)
+    (entity-new-turnstile-ew  7 0)
+
+    (= level-current-number 2)))
+
+(define level-3 [level-3] '() (fn ()
+
+    ; Top row
+    (entity-new-exit          5 0)
+    (entity-new-player       -5 0)
+    (entity-new-turnstile-we  0 0)
+    (entity-new-turnstile-we -7 0)
+
+    (= level-current-number 3)))
+
+(define level-4 [level-4] '() (fn ()
+
+    ; Top row
+    (entity-new-exit          0 -5)
+    (entity-new-player        0  5)
+    (entity-new-turnstile-sn  0  0)
+    (entity-new-turnstile-sn  0  7)
+
+    (= level-current-number 4)))
+
+(define level-5 [level-5] '() (fn ()
+
+    ; Top row
+    (entity-new-exit          0  5)
+    (entity-new-player        0 -5)
+    (entity-new-turnstile-ns  0  0)
+    (entity-new-turnstile-ns  0 -7)
+
+    (= level-current-number 5)))
+
+(define level-6 [level-6] '() (fn ()
     ; top row
     (for i from -8 to 0 (entity-new-wall i -6))
 
@@ -397,7 +522,7 @@
     ; Bottom row
     (for i from -7 to 7 (entity-new-wall i 5))
 
-    (= level-current-number 2)))
+    (= level-current-number 3)))
 
 (define level-restart [restart level] '() (fn ()
     (level-reset)
@@ -408,6 +533,10 @@
 
     (if (== 1 lnum) (level-1))
     (if (== 2 lnum) (level-2))
+    (if (== 3 lnum) (level-3))
+    (if (== 4 lnum) (level-4))
+    (if (== 5 lnum) (level-5))
+    (if (== 6 lnum) (level-6))
 
     (shake)))
 
@@ -420,7 +549,12 @@
     (define lnum [level number before change] level-current-number)
 
     (if (== 1 lnum) (level-2))
-    (if (== 2 lnum) (level-1))))
+    (if (== 2 lnum) (level-3))
+    (if (== 3 lnum) (level-4))
+    (if (== 4 lnum) (level-5))
+    (if (== 5 lnum) (level-6))
+    (if (== 6 lnum) (level-1))
+    ))
 
 (define current-state [current-state] [game])
 (define pending-input [pending input that is not yet handled] '())

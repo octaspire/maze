@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 2)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 3)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
@@ -10,13 +10,12 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/octaspire/maze/octaspire_maz
     "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_config.h")
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
-        "Choode the type of build, options are: Debug Release RelWithDebInfo MinSizeRel. " FORCE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+        "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel. " FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/.gitmodules")
-    set (EXECUTE_COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --magenta --bold "Updating git submodules...")
-    execute_process (COMMAND ${EXECUTE_COMMAND})
+    message("== Updating git submodules...")
     execute_process(
         COMMAND git submodule update --init --recursive --remote
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -25,6 +24,7 @@ endif()
 
 
 project(octaspire-maze C)
+message("== Build type is ${CMAKE_BUILD_TYPE}")
 add_subdirectory(external/octaspire_dern)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external/cmake")
@@ -48,13 +48,12 @@ set_property(TARGET octaspire-xxd PROPERTY C_STANDARD 99)
 set_property(TARGET octaspire-xxd PROPERTY C_EXTENSIONS OFF)
 target_link_libraries(octaspire-xxd octaspire_core m)
 
+option(OCTASPIRE_MAZE_COVERAGE "OCTASPIRE_MAZE_COVERAGE" OFF)
 
-
-
-
-
-
-
+if(OCTASPIRE_MAZE_COVERAGE)
+    message("== Code coverage enabled")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
+endif(OCTASPIRE_MAZE_COVERAGE)
 
 add_executable(octaspire-maze ${SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c")
 set_property(TARGET octaspire-maze PROPERTY C_STANDARD 99)
@@ -70,13 +69,6 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fcolor-diagnostics -fsanitize=undefined")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fcolor-diagnostics")
 endif(CMAKE_C_COMPILER_ID MATCHES "Clang")
-
-if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -coverage -fprofile-arcs -ftest-coverage")
-endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
-
-
-
 
 target_link_libraries(octaspire-maze ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} octaspire_dern octaspire_core m)
 install(TARGETS octaspire-maze DESTINATION bin)

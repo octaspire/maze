@@ -6,6 +6,7 @@
 #include <octaspire/dern/octaspire_dern_vm.h>
 //#include <octaspire/dern/octaspire_dern_config.h>
 #include <octaspire/core/octaspire_memory.h>
+#include <octaspire/core/octaspire_helpers.h>
 #include "octaspire/maze/octaspire_sdl2_texture.h"
 #include "octaspire/maze/octaspire_sdl2_animation.h"
 #include "octaspire/maze/octaspire_maze_game.h"
@@ -29,14 +30,14 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 {
     size_t const stackLength = octaspire_dern_vm_get_stack_length(vm);
 
-    assert(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
-    assert(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
+    octaspire_helpers_verify(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
+    octaspire_helpers_verify(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
 
     size_t const numArgs = octaspire_dern_value_get_length(arguments);
 
     if (numArgs < 2)
     {
-        assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
             "Builtin 'animation-entity-define' expects at least two arguments. %zu arguments were given.",
@@ -57,11 +58,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 
         if (animNameVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
         {
-            assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return animNameVal;
         }
 
-        assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
             "First argument to builtin 'animation-entity-define' must be string value. "
@@ -101,11 +102,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 
             if (indexVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
             {
-                assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
                 return indexVal;
             }
 
-            assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
                 "%zuth argument to builtin 'animation-enity-define' must be integer value. "
@@ -127,7 +128,7 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
         abort();
     }
 
-    assert(stackLength == octaspire_dern_vm_get_stack_length(vm));
+    octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
     return octaspire_dern_vm_get_value_true(vm);
 }
 
@@ -287,7 +288,7 @@ int main(void)
     size_t const initScriptBufferLength = strlen(initScriptBuffer);
 #endif
 
-    //assert(animation);
+    //octaspire_helpers_verify(animation);
     octaspire_maze_game_push_back_state(
         game,
         octaspire_maze_state_new(game, octaspire_maze_ini, octaspire_maze_ini_len, allocator, stdio));

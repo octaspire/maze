@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/octaspire/maze.svg?branch=master)](https://travis-ci.org/octaspire/maze)
+[![Build Status](https://travis-ci.org/octaspire/maze.svg?branch=master)](https://travis-ci.org/octaspire/maze) [![Coverage Status](https://codecov.io/gh/octaspire/maze/coverage.svg?branch=master)](https://codecov.io/gh/octaspire/maze/coverage.svg?branch=master)
+
 
 Game written in programming languages Dern and standard C99
 

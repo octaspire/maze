@@ -12,9 +12,14 @@ before_install:
 before_script:
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake -DCMAKE_BUILD_TYPE=Debug -DOCTASPIRE_MAZE_COVERAGE:BOOL=ON ..
 
 script:
     - make
     - test/octaspire-maze-test-runner
+    - cd test/CMakeFiles/octaspire-maze-test-runner.dir
+    - gcov *.gcno
+
+after_success:
+      - bash <(curl -s https://codecov.io/bash)
 

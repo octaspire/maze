@@ -4,7 +4,7 @@ file(GLOB SOURCES "*.c")
 include_directories(${OCTASPIRE_DERN_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
-add_executable(octaspire-maze-test-runner "${SOURCES}")
+add_executable(octaspire-maze-test-runner ${SOURCES})
 set_property(TARGET octaspire-maze-test-runner PROPERTY C_STANDARD 99)
 set_property(TARGET octaspire-maze-test-runner PROPERTY C_EXTENSIONS OFF)
 

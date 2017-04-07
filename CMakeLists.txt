@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 1)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 2)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
@@ -56,7 +56,7 @@ target_link_libraries(octaspire-xxd octaspire_core m)
 
 
 
-add_executable(octaspire-maze "${SOURCES}" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c")
+add_executable(octaspire-maze ${SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c")
 set_property(TARGET octaspire-maze PROPERTY C_STANDARD 99)
 set_property(TARGET octaspire-maze PROPERTY C_EXTENSIONS OFF)
 

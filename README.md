@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/octaspire/maze.svg?branch=master)](https://travis-ci.org/octaspire/maze)
+
 Game written in programming languages Dern and standard C99
 
 To build on Raspberry Pi or Debian:

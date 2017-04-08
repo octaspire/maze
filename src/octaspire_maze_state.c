@@ -1100,6 +1100,7 @@ bool octaspire_maze_state_set_animation_position(
 
     if (!element)
     {
+        //octaspire_dern_vm_print_stack(self->vm);
         octaspire_helpers_verify(false);
         return false;
     }

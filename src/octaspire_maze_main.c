@@ -220,8 +220,6 @@ int main(void)
         renderer,
         allocator);
 
-    octaspire_sdl2_texture_print(texture);
-
     if (!octaspire_dern_vm_create_and_register_new_builtin(
         vm,
         "animation-entity-define",
@@ -245,61 +243,12 @@ int main(void)
         abort();
     }
 
-    /*
-    SDL_Rect rect;
-
-    octaspire_sdl2_animation_t *animation = octaspire_sdl2_animation_new("unknown", allocator);
-
-    for (size_t y = 0; y < 9; ++y)
-    {
-        for (size_t x = 0; x < 8; ++x)
-        {
-            rect.x = x * 64; rect.y = y * 64; rect.w = 64; rect.h = 64;
-            octaspire_sdl2_animation_push_back_frame(animation, &rect, 0.25);
-        }
-    }
-    */
-
-
     bool running = true;
     SDL_Event e;
-#if 0
-    //octaspire_sdl2_animation_t *animation = octaspire_maze_game_get_animation_copy(game, "stand");
 
-    //char *initScriptBuffer = "(println [hi])";
-    char *initScriptBuffer =
-        "(define entity-new-player [entity-new-player] '(x [x-coordinate] y [y-coordinate]) (fn (x y)\n"
-        "     (animation-entity-new (string-format [player-{}-{}] x y) [run] '(x y 0))\n"
-        "))\n"
-        "(entity-new-player 100 100)\n"
-        "(entity-new-player 100 200)\n"
-        "(entity-new-player 200 100)\n"
-        "(define state-update [state-update] '(dt [delta time]) (fn (dt) true))";
-
-#if 0
-        //"(for i from 0 to 10 (println (to-string i)))\n"
-        "(for i from 0 to 100 (animation-entity-new (to-string i) [run] '((* i 10) (* 40) 3)))\n"
-        //"(animation-entity-new [animname] [run] '(100 40 3))\n"
-        //"(animation-entity-new [animname2] [run] '(100 140 3))\n"
-        //"(for i from 0 to 10 (println [&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&]))\n"
-        "(define state-update [state-update] '(dt [delta time]) (fn (dt) true))";
-#endif
-
-    size_t const initScriptBufferLength = strlen(initScriptBuffer);
-#endif
-
-    //octaspire_helpers_verify(animation);
     octaspire_maze_game_push_back_state(
         game,
         octaspire_maze_state_new(game, octaspire_maze_ini, octaspire_maze_ini_len, allocator, stdio));
-
-
-
-
-
-
-
-
 
     Uint64 timeNow   = SDL_GetPerformanceCounter();
     Uint64 timeLast  = 0;
@@ -394,8 +343,6 @@ int main(void)
 
         octaspire_maze_game_update(game, deltaTime, input, winW, winH);
         octaspire_maze_game_render(game, renderer, texture, origoX, origoY);
-        //octaspire_sdl2_animation_update(animation, deltaTime);
-        //octaspire_sdl2_animation_render_at_position(animation, renderer, texture, origoX, origoY, 0, 0);
         SDL_RenderPresent(renderer);
     }
 

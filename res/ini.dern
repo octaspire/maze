@@ -1,40 +1,68 @@
 (define level [level] '())
-(define level-width  [level-width] 32)
+(define level-width  [level-width] 20)
 (define level-hwidth [level half width] (to-integer (* level-width 0.5)))
 (define level-current-number [current level number] nil)
 (define level-number-of-keys  [How many keys current level had when it started] 0)
-(define player-number-of-keys [How many keys player has collected on current level] 0)
+(define player-x   [current player x]   nil)
+(define player-y   [current player y]   nil)
+(define level-updatable-indices [entities in current level that must be updated] (hash-map))
+(define pass-or-fail-level-pending [.] false)
 
-(for i from 0 to (* level-width level-width) (+= level []))
+(define get-player [.] '() (fn ()
+    (level-get-slot player-x player-y)))
 
-(define player-x   [player-x]   0)
-(define player-y   [player-y]   0)
-(define player-dir [player-dir] nil)
-(define entity-attributes [properties for entities] (hash-map))
+(define make-empty-slot [make empty slot] '() (fn ()
+    (hash-map
+         'name []
+         'x    0
+         'y    0
+         'dir  nil
+         'count 0
+         'bomb-original-count 0
+         'bomb-started false
+         'bomb-uptime 0
+         'number-of-keys 0
+         'current-pullable-x nil
+         'current-pullable-y nil
+         'player-was-on-side  [])))
+
+(define level-init [init level] '() (fn ()
+    (for i from 0 to (* level-width level-width) (+= level (make-empty-slot)))))
+
+(level-init)
 
 (define level-reset [clear level] '() (fn ()
     (animation-entity-remove-all)
     (= pending-input '())
-    (= player-x   0)
-    (= player-y   0)
-    (= player-dir nil)
-    (= level '())
-    (= current-pullable-x nil)
-    (= current-pullable-y nil)
-    (= current-pullable-id [])
-    (= entity-attributes (hash-map))
+    (= level-updatable-indices (hash-map))
     (= level-number-of-keys 0)
-    (= player-number-of-keys 0)
-    (for i from 0 to (* level-width level-width) (+= level []))))
+    (= player-x nil)
+    (= player-y nil)
+    (= pass-or-fail-level-pending false)
+    ; TODO why this doesn't work?
+    ;(for i from 0 to (* level-width level-width) (= (nth level i) 'name []))
+    (for i in level (= i 'name []))
+    ))
 
 (define coordinates-to-index [...] '(x [x] y [y]) (fn (x y)
     (+ (+ x level-hwidth) (* (+ y level-hwidth) level-width))))
 
-(define level-set [level-set] '(x [x] y [y] entity [entity]) (fn (x y entity)
-    (= level (coordinates-to-index x y) entity)))
+(define level-set-slot [level-set-slot] '(x [x] y [y] slot [slot]) (fn (x y slot)
+    (= (nth (coordinates-to-index x y) level) slot)))
 
-(define level-get [level-get] '(x [x] y [y]) (fn (x y)
+(define level-set-slot-to-empty [level-set-slot] '(x [x] y [y]) (fn (x y)
+    ;(= (level-get-slot x y) nil)))
+    (= (level-get-slot x y) 'name [])))
+
+(define level-get-slot [level-get-slot] '(x [x] y [y]) (fn (x y)
     (nth (coordinates-to-index x y) level)))
+
+(define level-move-slot [level-move-slot] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
+    (level-set-slot tx ty (level-get-slot fx fy))
+    (level-set-slot-to-empty fx fy)
+    (= (level-get-slot tx ty) 'x tx)
+    (= (level-get-slot tx ty) 'y ty)
+    ))
 
 (define are-coordinates-out-of-level [check if coordinates are outside level area] '(x [x] y [y]) (fn (x y)
     (define result [result] false)
@@ -43,11 +71,6 @@
     (if (< y (- level-hwidth))       (do (= result true)))
     (if (>= y level-hwidth)          (do (= result true)))
     result))
-
-(define current-pullable-x                  [current pullable x] nil)
-(define current-pullable-y                  [current pullable y] nil)
-(define current-pullable-player-was-on-side [is player above, below, right or left side] nil)
-(define current-pullable-id                 [current pullable id or empty string] [])
 
 (define dir-to-side [dir-to-side] '(dir [dir]) (fn (dir)
     (if (== dir [u])
@@ -65,7 +88,6 @@
     nil))
 
 (define coords-to-side [coords-to-side] '(ex [ex] ey [ey] px [px] py [py]) (fn (ex ey px py)
-    ; TODO XXX check this implementation, it is written very fast and not checked!
     (if (== ex px)
         (if (== ey py) (return nil) (if (> ey py) (return [d]) (return [u]))))
 
@@ -74,156 +96,199 @@
 
     nil))
 
+(define bomb-remove [remove the named bomb at the given coordinates] '(name [name] x [x] y [y]) (fn (name x y)
+    (level-set-slot-to-empty x y)
+    (animation-entity-remove name)
+    (-= level-updatable-indices name) 
+    nil))
+
+(define bomb-on-collision [should be called when bomb has collision with player] '(name [bomb's name] x [bomb's x] y [bomb's y]) (fn (name x y)
+        (define slot [slot at x y, the bomb] (level-get-slot x y))
+        (if (find slot 'bomb-started) (bomb-remove name x y) (= slot 'bomb-started true))))
+
 (define stop-counter-remove [remove the named stop counter at the given coordinates] '(name [name] x [x] y [y]) (fn (name x y)
-    (level-set x y [])
+    (level-set-slot-to-empty x y)
     (animation-entity-remove name)
     nil))
 
+(define get-player-num-keys [.] '() (fn ()
+    (find (get-player) 'number-of-keys)))
+
+(define set-player-dir [.] '(dir [dir]) (fn (dir)
+    (= (get-player) 'dir dir)))
+
+(define get-player-current-pullable-id [.] '() (fn ()
+    (find (get-player) 'current-pullable-id)))
+
+(define get-pullable-x [.] '() (fn ()
+    (find (get-player) 'current-pullable-x)))
+
+(define get-pullable-y [.] '() (fn ()
+    (find (get-player) 'current-pullable-y)))
+
 (define stop-counter-on-collision [should be called when stop counter has collision with player] '(name [counter's name] x [counter's x] y [counter's y]) (fn (name x y)
-        (define count [count before collision] (find entity-attributes name))
+        (define slot [slot at x y, the counter] (level-get-slot x y))
+        (define count [count before collision] (find slot 'count))
         (if (== count 1) (do (stop-counter-remove name x y) (return nil)))
         (define animationName [name of the animation] (string-format [stop-counter-{}] count))
         (animation-entity-remove name)
         (-= count 1)
         (define animationName [name of the animation] (string-format [stop-counter-{}] count))
         (animation-entity-new name animationName '((* 16 x) (* 16 y) 0))
-        (= entity-attributes name count)))
+        (= slot 'count count)))
 
 (define key-on-collision [should be called when key has collision with player] '(name [key's name] x [key's x] y [key's y]) (fn (name x y)
-        (level-set x y [])
+        (level-set-slot-to-empty x y)
         (animation-entity-remove name)
-        (++ player-number-of-keys)))
+        (= (get-player) 'number-of-keys (++ (find (get-player) 'number-of-keys)))))
 
 (define turnstile-ew-on-collision [should be called when turnstile-ew has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
-
         (define fx [fx] (+ x 1))
         (define fy [fy] y)
-
         (if (!= fx player-x) (return nil))
         (if (!= fy player-y) (return nil))
-
         (define tx [tx] (- x 1))
         (define ty [ty] y)
-
-        (move-player-from-to fx fy tx ty)
-        (= player-dir pdir)
-        ))
+        (move-player-to tx ty)
+        (= (get-player) 'dir pdir)))
 
 (define turnstile-we-on-collision [should be called when turnstile-we has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
-
         (define fx [fx] (- x 1))
         (define fy [fy] y)
-
         (if (!= fx player-x) (return nil))
         (if (!= fy player-y) (return nil))
-
         (define tx [tx] (+ x 1))
         (define ty [ty] y)
-
-        (move-player-from-to fx fy tx ty)
-        (= player-dir pdir)
-        ))
+        (move-player-to tx ty)
+        (= (get-player) 'dir pdir)))
 
 (define turnstile-sn-on-collision [should be called when turnstile-sn has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
-
         (define fx [fx] x)
         (define fy [fy] (+ y 1))
-
         (if (!= fx player-x) (return nil))
         (if (!= fy player-y) (return nil))
-
         (define tx [tx] x)
         (define ty [ty] (- y 1))
-
-        (move-player-from-to fx fy tx ty)
-        (= player-dir pdir)
-        ))
+        (move-player-to tx ty)
+        (= (get-player) 'dir pdir)))
 
 (define turnstile-ns-on-collision [should be called when turnstile-ns has collision with player] '(name [turnstile's name] x [turnstile's x] y [turnstile's y] pdir [player's dir]) (fn (name x y pdir)
-
         (define fx [fx] x)
         (define fy [fy] (- y 1))
-
         (if (!= fx player-x) (return nil))
         (if (!= fy player-y) (return nil))
-
         (define tx [tx] x)
         (define ty [ty] (+ y 1))
+        (move-player-to tx ty)
+        (= (get-player) 'dir pdir)))
 
-        (move-player-from-to fx fy tx ty)
-        (= player-dir pdir)
-        ))
+(define slope-en-on-collision [should be called when slope-en has collision with player] '(name [slope's name] x [slope's x] y [slope's y] pdir [player's dir]) (fn (name x y pdir)
+        (define fx1 [fx1] x)
+        (define fy1 [fy1] (- y 1))
+        (define fx2 [fx2] (+ x 1))
+        (define fy2 [fy2] y)
+        (define tx1 [tx1] fx2)
+        (define ty1 [ty1] fy2)
+        (define tx2 [tx2] fx1)
+        (define ty2 [ty2] fy1)
+        (if (and (== fx1 player-x) (== fy1 player-y)) (do (move-player-to tx1 ty1) (= (get-player) 'dir [r]) (return nil)))
+        (if (and (== fx2 player-x) (== fy2 player-y)) (do (move-player-to tx2 ty2) (= (get-player) 'dir [u]) (return nil)))))
+
+(define slope-es-on-collision [should be called when slope-es has collision with player] '(name [slope's name] x [slope's x] y [slope's y] pdir [player's dir]) (fn (name x y pdir)
+        (define fx1 [fx1] x)
+        (define fy1 [fy1] (+ y 1))
+        (define fx2 [fx2] (+ x 1))
+        (define fy2 [fy2] y)
+        (define tx1 [tx1] fx2)
+        (define ty1 [ty1] fy2)
+        (define tx2 [tx2] fx1)
+        (define ty2 [ty2] fy1)
+        (if (and (== fx1 player-x) (== fy1 player-y)) (do (move-player-to tx1 ty1) (= (get-player) 'dir [r]) (return nil)))
+        (if (and (== fx2 player-x) (== fy2 player-y)) (do (move-player-to tx2 ty2) (= (get-player) 'dir [d]) (return nil)))))
+
+(define slope-nw-on-collision [should be called when slope-nw has collision with player] '(name [slope's name] x [slope's x] y [slope's y] pdir [player's dir]) (fn (name x y pdir)
+        (define fx1 [fx1] x)
+        (define fy1 [fy1] (- y 1))
+        (define fx2 [fx2] (- x 1))
+        (define fy2 [fy2] y)
+        (define tx1 [tx1] fx2)
+        (define ty1 [ty1] fy2)
+        (define tx2 [tx2] fx1)
+        (define ty2 [ty2] fy1)
+        (if (and (== fx1 player-x) (== fy1 player-y)) (do (move-player-to tx1 ty1) (= (get-player) 'dir [l]) (return nil)))
+        (if (and (== fx2 player-x) (== fy2 player-y)) (do (move-player-to tx2 ty2) (= (get-player) 'dir [u]) (return nil)))))
+
+(define slope-sw-on-collision [should be called when slope-sw has collision with player] '(name [slope's name] x [slope's x] y [slope's y] pdir [player's dir]) (fn (name x y pdir)
+        (define fx1 [fx1] x)
+        (define fy1 [fy1] (+ y 1))
+        (define fx2 [fx2] (- x 1))
+        (define fy2 [fy2] y)
+        (define tx1 [tx1] fx2)
+        (define ty1 [ty1] fy2)
+        (define tx2 [tx2] fx1)
+        (define ty2 [ty2] fy1)
+        (if (and (== fx1 player-x) (== fy1 player-y)) (do (move-player-to tx1 ty1) (= (get-player) 'dir [l]) (return nil)))
+        (if (and (== fx2 player-x) (== fy2 player-y)) (do (move-player-to tx2 ty2) (= (get-player) 'dir [d]) (return nil)))))
 
 (define pass-or-fail-level [Move to next level or restart current] '() (fn ()
-    (if (< player-number-of-keys level-number-of-keys) (do (level-restart) (return nil)))
-
+    (if (< (find (get-player) 'number-of-keys) level-number-of-keys) (do (level-restart) (return nil)))
     ; Level is passed
     (do (= current-state [tweenOut]) (tween-level-out))))
 
 (define on-collision [on-collision] '(tx [tx] ty [ty] dir [player's direction]) (fn (tx ty dir)
-    (define name [name] (level-get tx ty))
+    (define slot [slot at tx ty, the thing collided with] (level-get-slot tx ty))
+    (define name [name] (find slot 'name))
 
     (define side [on which side is player of the target] (dir-to-side dir))
 
-    ; TODO name must be fixed to be exit-x-y and here we must use some
-    ; simple regexp-style matching or starts-with? Those must be implemented...
-    (if (starts-with? name [exit]    ) (pass-or-fail-level))
+    (if (starts-with? name [exit]) (do (= pass-or-fail-level-pending true) (return nil)))
 
-    (define pid [pid] current-pullable-id)
+    (define pid [pid] (get-player-current-pullable-id))
 
-    (if (starts-with? name [pullable]) (do 
-                                           (set-current-pullable-data tx ty name)
-                                           (= current-pullable-player-was-on-side side)))
+    (if (starts-with? name [pullable])     (do
+                                               (= (get-player) 'current-pullable-x tx)
+                                               (= (get-player) 'current-pullable-y ty)
+                                               (= slot 'player-was-on-side side)))
 
     (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))
-    (if (starts-with? name [key])          (do (key-on-collision name tx ty) (= player-dir dir)))
+    (if (starts-with? name [bomb])         (bomb-on-collision name tx ty))
+    (if (starts-with? name [key])          (do (key-on-collision name tx ty) (set-player-dir dir)))
     (if (starts-with? name [turnstile-ew]) (turnstile-ew-on-collision name tx ty dir))
     (if (starts-with? name [turnstile-we]) (turnstile-we-on-collision name tx ty dir))
     (if (starts-with? name [turnstile-sn]) (turnstile-sn-on-collision name tx ty dir))
     (if (starts-with? name [turnstile-ns]) (turnstile-ns-on-collision name tx ty dir))
+    (if (starts-with? name [slope-en])     (slope-en-on-collision name tx ty dir))
+    (if (starts-with? name [slope-es])     (slope-es-on-collision name tx ty dir))
+    (if (starts-with? name [slope-nw])     (slope-nw-on-collision name tx ty dir))
+    (if (starts-with? name [slope-sw])     (slope-sw-on-collision name tx ty dir))
     ))
 
 (define move-pullable-from-to [move pullable] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
 
-        (if (== current-pullable-id []) (return nil))
-        ; aborts here
-        (if (!= current-pullable-id (level-get fx fy)) (abort [should not happen! AA]))
+        (define from-slot [slot at fx fy] (level-get-slot fx fy))
 
-        (if (not (starts-with? (level-get fx fy) [pullable-ensw])) (abort [pullable ensw expected]))
+        (if (not (starts-with? (find from-slot 'name) [pullable-ensw])) (abort [pullable ensw expected]))
 
-        (if (== [] (level-get tx ty))
-            (do (level-set fx fy [])
-                (level-set tx ty current-pullable-id)
-                (animation-entity-set-position current-pullable-id (vector (* 16 tx) (* 16 ty) 0))
-                (set-current-pullable-data tx ty current-pullable-id)))))
+        (define to-slot [slot at tx ty] (level-get-slot tx ty))
 
-(define move-pullable-up [...] '() (fn ()
-    (move-pullable-from-to
-        current-pullable-x
-        current-pullable-y
-        current-pullable-x
-        (- current-pullable-y 1))))
+        (if (== [] (find to-slot 'name))
+            (do (level-move-slot fx fy tx ty)
+                (animation-entity-set-position (find to-slot 'name)  (vector (* 16 tx) (* 16 ty) 0))
+                (= (get-player) 'current-pullable-x tx)
+                (= (get-player) 'current-pullable-y ty)
+                ))))
 
-(define move-pullable-down [...] '() (fn ()
-    (move-pullable-from-to
-        current-pullable-x
-        current-pullable-y
-        current-pullable-x
-        (+ current-pullable-y 1))))
+(define move-pullable-up [...] '(x [x] y [y]) (fn (x y)
+    (move-pullable-from-to x y x (- y 1))))
 
-(define move-pullable-left [...] '() (fn ()
-    (move-pullable-from-to
-        current-pullable-x
-        current-pullable-y
-        (- current-pullable-x 1)
-        current-pullable-y)))
+(define move-pullable-down [...] '(x [x] y [y]) (fn (x y)
+    (move-pullable-from-to x y x (+ y 1))))
 
-(define move-pullable-right [...] '() (fn ()
-    (move-pullable-from-to
-        current-pullable-x
-        current-pullable-y
-        (+ current-pullable-x 1)
-        current-pullable-y )))
+(define move-pullable-left [...] '(x [x] y [y]) (fn (x y)
+    (move-pullable-from-to x y (- x 1) y)))
+
+(define move-pullable-right [...] '(x [x] y [y]) (fn (x y)
+    (move-pullable-from-to x y (+ x 1) y)))
 
 (define reverse-side [...] '(side [side to reverse]) (fn (side)
     (if (== [u] side) (return [d]))
@@ -231,111 +296,203 @@
     (if (== [l] side) (return [r]))
     (if (== [r] side) (return [l]))))
 
-(define set-current-pullable-data [...] '(x [x] y [y] id [id]) (fn (x y id)
-    (= current-pullable-x  x)
-    (= current-pullable-y  y)
-    (= current-pullable-id id)))
-
 (define update-possible-pullable [...] '() (fn ()
-    (if (== current-pullable-x  nil) (return nil))
-    (if (== current-pullable-y  nil) (return nil))
-    (if (== current-pullable-id  []) (return nil))
+    (define px  [px]  (get-pullable-x))
+    (define py  [py]  (get-pullable-y))
+
+    (if (== px nil) (return nil))
+
+    (define pullable [pullable being pulled] (level-get-slot px py))
 
     (define currentSide [current side]
-        (coords-to-side current-pullable-x current-pullable-y player-x player-y))
+        (coords-to-side px py player-x player-y))
 
     (= currentSide (reverse-side currentSide))
 
-    (define pid [pid] current-pullable-id)
-    (define px  [px]  current-pullable-x)
-    (define py  [py]  current-pullable-y)
+    (if (!= currentSide (find pullable 'player-was-on-side))
+        (do (= (get-player) 'current-pullable-x nil) (= (get-player) 'current-pullable-y nil) (return nil)))
 
-    (if (== (uid current-pullable-id) (uid (level-get px py))) (abort [should not happen]))
+    (if (== currentSide [u]) (do (move-pullable-up    px py) (return nil)))
+    (if (== currentSide [d]) (do (move-pullable-down  px py) (return nil)))
+    (if (== currentSide [l]) (do (move-pullable-left  px py) (return nil)))
+    (if (== currentSide [r]) (do (move-pullable-right px py) (return nil)))))
 
-    (if (!= current-pullable-id (level-get px py)) (abort [should not happen!]))
-
-    (if (!= currentSide current-pullable-player-was-on-side)
-        (do (set-current-pullable-data nil nil []) (return nil)))
-
-    (if (== currentSide [u]) (do (move-pullable-up)    (return nil)))
-    (if (== currentSide [d]) (do (move-pullable-down)  (return nil)))
-    (if (== currentSide [l]) (do (move-pullable-left)  (return nil)))
-    (if (== currentSide [r]) (do (move-pullable-right) (return nil)))))
-
-(define move-player-from-to [move player] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
-    (define playerId [player id] (level-get fx fy))
-    (if (not (starts-with? playerId [player])) (abort [xxxx]))
-
+(define move-player-to [move player] '(tx [tx] ty [ty]) (fn (tx ty)
     (if (are-coordinates-out-of-level tx ty)
         (level-restart)
-        (if (== [] (level-get tx ty))
-            (do (level-set fx fy [])
-                (level-set tx ty playerId)
-                (animation-entity-set-position playerId (vector (* 16 tx) (* 16 ty) 0))
+        (if (== [] (find (level-get-slot tx ty) 'name))
+            (do
+                (level-move-slot player-x player-y tx ty)
                 (= player-x tx)
-                (= player-y ty))
-         (do
-            (define tmpDir [tmpDir] player-dir)
-            (= player-dir nil)
-            (on-collision tx ty tmpDir))))
-    (update-possible-pullable)))
+                (= player-y ty)
+                (animation-entity-set-position (find (get-player) 'name) (vector (* 16 tx) (* 16 ty) 0))
+                )
+             (do
+                (define tmpDir [tmpDir] (find (get-player) 'dir))
+                (= (get-player) 'dir nil)
+                (on-collision tx ty tmpDir))))
+    (update-possible-pullable)
+    ))
 
 (define entity-new-player [entity-new-player] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [player-{}-{}] x y))
      (animation-entity-new id [player-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)
+     (level-set-slot x y (make-empty-slot))
      (= player-x x)
-     (= player-y y)))
+     (= player-y y)
+     (= (get-player) 'name id)
+     (= (get-player) 'x    x)
+     (= (get-player) 'y    y)
+     ;(define slot [slot at x y, the player to be] (level-get-slot x y))
+     ;(= slot 'name id)
+     ;(= slot 'x    x)
+     ;(= slot 'y    y)
+     ;(alias current-player slot)
+     ))
 
 (define entity-new-wall [entity-new-wall] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [wall-{}-{}] x y))
      (animation-entity-new id [wall-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the wall to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-slope-en [entity-new-slope-en] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [slope-en-{}-{}] x y))
+     (animation-entity-new id [slope-en-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-en to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-slope-es [entity-new-slope-es] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [slope-es-{}-{}] x y))
+     (animation-entity-new id [slope-es-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-es to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-slope-nw [entity-new-slope-nw] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [slope-nw-{}-{}] x y))
+     (animation-entity-new id [slope-nw-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-nw to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-slope-sw [entity-new-slope-sw] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [slope-sw-{}-{}] x y))
+     (animation-entity-new id [slope-sw-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-sw to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define entity-new-turnstile-ew [entity-new-turnstile-ew] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [turnstile-ew-{}-{}] x y))
      (animation-entity-new id [turnstile-ew-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-ew to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define entity-new-turnstile-we [entity-new-turnstile-we] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [turnstile-we-{}-{}] x y))
      (animation-entity-new id [turnstile-we-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-we to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define entity-new-turnstile-sn [entity-new-turnstile-sn] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [turnstile-sn-{}-{}] x y))
      (animation-entity-new id [turnstile-sn-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-sn to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define entity-new-turnstile-ns [entity-new-turnstile-ns] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [turnstile-ns-{}-{}] x y))
      (animation-entity-new id [turnstile-ns-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the slope-ns to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define entity-new-exit [entity-new-exit] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [exit-{}-{}] x y))
      (animation-entity-new id [exit-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the exit to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
-(define entity-new-pullable-ensw [Add entity that can be pulled to up, down, left and right]
-    '(x [x-coordinate] y [y-coordinate]) (fn (x y)
-
+(define entity-new-pullable-ensw [Add entity that can be pulled to up, down, left and right] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [pullable-ensw-{}-{}] x y))
-
      (animation-entity-new  id [pullable-ensw-idle] '((* 16 x) (* 16 y) 0))
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the pullable-ensw to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define entity-new-stop-counter [entity-new-stop-counter] '(x [x-coordinate] y [y-coordinate] count [current count]) (fn (x y count)
      (define id [id] (string-format [stop-counter-{}-{}] x y))
      (animation-entity-new id (string-format [stop-counter-{}] count) '((* 16 x) (* 16 y) 0))
-     (+= entity-attributes id count)
-     (level-set x y id)))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the stop-counter to be] (level-get-slot x y))
+     (= slot 'count count)
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-bomb [entity-new-bomb] '(x [x-coordinate] y [y-coordinate] count [current count]) (fn (x y count)
+     (define id [id] (string-format [bomb-{}-{}] x y))
+     (animation-entity-new id (string-format [bomb-{}] count) '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the bomb to be] (level-get-slot x y))
+     (= slot 'count count)
+     (= slot 'bomb-original-count count)
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     (+= level-updatable-indices id slot)))
 
 (define entity-new-key [Create new key] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
      (define id [id] (string-format [key-{}-{}] x y))
      (animation-entity-new id [key-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the key to be] (level-get-slot x y))
      (++ level-number-of-keys)
-     (level-set x y id)))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
 
 (define level-1 [level-1] '() (fn ()
 
@@ -395,44 +552,80 @@
 (define level-2 [level-2] '() (fn ()
 
     ; Top row
-    (entity-new-exit         -5 0)
-    (entity-new-player        5 0)
-    (entity-new-turnstile-ew  0 0)
-    (entity-new-turnstile-ew  7 0)
+    (entity-new-wall      -7  -7)
+
+    ; 2. row
+    (entity-new-wall      -2  -6)
+    (entity-new-key       -1  -6)
+    (entity-new-slope-sw   2  -6)
+
+    ; 3. row
+    (entity-new-wall       5  -5)
+
+    ; 4. row
+    (entity-new-wall      -5  -4)
+    (entity-new-wall      -4  -4)
+    (entity-new-wall       0  -4)
+    (entity-new-wall       1  -4)
+
+    ; 5. row
+    (entity-new-wall          -6  -3)
+    (entity-new-key           -4  -3)
+    (entity-new-turnstile-we  -3  -3)
+    (entity-new-turnstile-ns  -1  -3)
+    (entity-new-key            0  -3)
+    (entity-new-wall           2  -3)
+
+    ; 6. row
+    (entity-new-slope-es      -8  -2)
+    (entity-new-turnstile-ew  -6  -2)
+    (entity-new-wall          -2  -2)
+    (entity-new-turnstile-we   2  -2)
+    (entity-new-turnstile-we   4  -2)
+    (entity-new-bomb           6  -2 10)
+
+    ; 7. row
+    (entity-new-wall          -6  -1)
+    (entity-new-wall           2  -1)
+    (entity-new-exit           8  -1)
+
+    ; 8. row
+    (entity-new-wall          -6   0)
+    (entity-new-wall           2   0)
+
+    ; 9. row
+    (entity-new-wall          -8   1)
+    (entity-new-wall          -5   1)
+    (entity-new-wall           1   1)
+    (entity-new-slope-nw       6   1)
+
+    ; 10. row
+    (entity-new-wall          -4   2)
+    (entity-new-wall          -0   2)
+
+    ; 11. row
+    (entity-new-wall          -7   3)
+    (entity-new-wall          -3   3)
+    (entity-new-wall          -1   3)
+    (entity-new-wall           3   3)
+
+    ; 12. row
+    (entity-new-turnstile-sn  -2   4)
+
+    ; 13. row
+    (entity-new-wall           1   5)
+
+    ; 14. row
+    (entity-new-wall          -5   6)
+
+    ; Bottom row
+    (entity-new-player        -8   7)
+    (entity-new-wall          -1   7)
 
     (= level-current-number 2)))
 
 (define level-3 [level-3] '() (fn ()
 
-    ; Top row
-    (entity-new-exit          5 0)
-    (entity-new-player       -5 0)
-    (entity-new-turnstile-we  0 0)
-    (entity-new-turnstile-we -7 0)
-
-    (= level-current-number 3)))
-
-(define level-4 [level-4] '() (fn ()
-
-    ; Top row
-    (entity-new-exit          0 -5)
-    (entity-new-player        0  5)
-    (entity-new-turnstile-sn  0  0)
-    (entity-new-turnstile-sn  0  7)
-
-    (= level-current-number 4)))
-
-(define level-5 [level-5] '() (fn ()
-
-    ; Top row
-    (entity-new-exit          0  5)
-    (entity-new-player        0 -5)
-    (entity-new-turnstile-ns  0  0)
-    (entity-new-turnstile-ns  0 -7)
-
-    (= level-current-number 5)))
-
-(define level-6 [level-6] '() (fn ()
     ; top row
     (for i from -8 to 0 (entity-new-wall i -6))
 
@@ -524,6 +717,73 @@
 
     (= level-current-number 3)))
 
+(define level-4 [level-4] '() (fn ()
+
+    ; Top row
+    (entity-new-exit          0  -9)
+
+    (for i from -7 to 7 (entity-new-pullable-ensw i  -7))
+
+    (for i from -7 to 7 (entity-new-pullable-ensw i  -6))
+
+    (for i from -7 to 7 (entity-new-pullable-ensw i  -5))
+
+    (for i from -7 to 7 (entity-new-pullable-ensw i  -4))
+
+    (for i from -7 to -2 (entity-new-pullable-ensw i  -3))
+    (for i from  2 to  7 (entity-new-pullable-ensw i  -3))
+
+    (for i from -7 to -3 (entity-new-pullable-ensw i  -2))
+    (for i from  3 to  7 (entity-new-pullable-ensw i  -2))
+
+    (for i from -7 to -4 (entity-new-pullable-ensw i  -1))
+    (for i from  4 to  7 (entity-new-pullable-ensw i  -1))
+
+    (entity-new-exit -9 0)
+    (for i from -7 to -4 (entity-new-pullable-ensw i   0))
+    (entity-new-player 0 0)
+    (for i from  4 to  7 (entity-new-pullable-ensw i   0))
+    (entity-new-exit  9 0)
+
+    (for i from -7 to -4 (entity-new-pullable-ensw i   1))
+    (for i from  4 to  7 (entity-new-pullable-ensw i   1))
+
+    (for i from -7 to -3 (entity-new-pullable-ensw i   2))
+    (for i from  3 to  7 (entity-new-pullable-ensw i   2))
+
+    (for i from -7 to -2 (entity-new-pullable-ensw i   3))
+    (for i from  2 to  7 (entity-new-pullable-ensw i   3))
+
+    (for i from -7 to  7 (entity-new-pullable-ensw i   4))
+
+    (for i from -7 to  7 (entity-new-pullable-ensw i   5))
+
+    (for i from -7 to  7 (entity-new-pullable-ensw i   6))
+
+    (for i from -7 to  7 (entity-new-pullable-ensw i   7))
+
+    (entity-new-exit 0 9)
+
+    (= level-current-number 4)))
+
+(define level-5 [level-5] '() (fn ()
+
+    ; Top row
+    (entity-new-player     -5   0)
+    (entity-new-exit        5   0)
+    (entity-new-bomb        0   0 10)
+
+    (= level-current-number 5)))
+
+(define level-6 [level-6] '() (fn ()
+
+    ; Top row
+    (entity-new-exit         -5  -5)
+    (entity-new-player        0   5)
+    (entity-new-slope-sw      0  -5)
+
+    (= level-current-number 6)))
+
 (define level-restart [restart level] '() (fn ()
     (level-reset)
 
@@ -554,6 +814,7 @@
     (if (== 4 lnum) (level-5))
     (if (== 5 lnum) (level-6))
     (if (== 6 lnum) (level-1))
+
     ))
 
 (define current-state [current-state] [game])
@@ -572,6 +833,27 @@
 
 (define printlevel [printlevel] false)
 
+(define bomb-update [update a bomb] '(slot [slot for the bomb] dt [delta time]) (fn (slot dt)
+    (if (not (find slot 'bomb-started)) (return nil))
+    (+= (find slot 'bomb-uptime) dt)
+
+    (if (>= (find slot 'bomb-uptime) (find slot 'bomb-original-count)) (bomb-remove (find slot 'name) (find slot 'x) (find slot 'y)))
+
+    (define tmpSecs [tmp secs] (- (find slot 'bomb-original-count) (to-integer (find slot 'bomb-uptime))))
+
+    (define curSecs [curret secs] (find slot 'count))
+    (if (== curSecs 0) (do (bomb-remove (find slot 'name) (find slot 'x) (find slot 'y) (return true))))
+    (if (== tmpSecs 0) (do (bomb-remove (find slot 'name) (find slot 'x) (find slot 'y) (return true))))
+
+    (if (< tmpSecs curSecs) (do
+                                (= slot 'count tmpSecs)
+                                (animation-entity-remove (find slot 'name))
+                                (animation-entity-new
+                                    (find slot 'name)
+                                    (string-format [bomb-{}] tmpSecs)
+                                    '((* 16 (find slot 'x)) (* 16 (find slot 'y)) 0))))
+))
+
 (define state-update-game [state-update]
                      '(dt [delta time]
                        input [string telling the input, if any: u, d, l, r]) (fn (dt input)
@@ -581,18 +863,29 @@
 
     (if (!= input []) (+= pending-input input))
 
-    (if (== player-dir nil)
+    (if (== nil player-x)     (return nil))
+    (if (== nil player-y)     (return nil))
+    (if (== nil (get-player)) (return nil))
+
+    (if (== (find (get-player) 'dir) nil)
         (do
             (= input (pop-input))
-            (if (== input [up])       (= player-dir [u]))
-            (if (== input [down])     (= player-dir [d]))
-            (if (== input [left])     (= player-dir [l]))
-            (if (== input [right])    (= player-dir [r]))))
+            (if (== input [up])       (= (get-player) 'dir [u]))
+            (if (== input [down])     (= (get-player) 'dir [d]))
+            (if (== input [left])     (= (get-player) 'dir [l]))
+            (if (== input [right])    (= (get-player) 'dir [r]))))
 
-    (if (== player-dir [u]) (move-player-from-to player-x player-y    player-x    (- player-y 1)))
-    (if (== player-dir [d]) (move-player-from-to player-x player-y    player-x    (+ player-y 1)))
-    (if (== player-dir [l]) (move-player-from-to player-x player-y (- player-x 1)    player-y))
-    (if (== player-dir [r]) (move-player-from-to player-x player-y (+ player-x 1)    player-y))
+    (define player-dir [player-dir] (find (get-player) 'dir))
+
+    (if (== player-dir [u]) (move-player-to player-x       (- player-y 1)))
+    (if (== player-dir [d]) (move-player-to player-x       (+ player-y 1)))
+    (if (== player-dir [l]) (move-player-to (- player-x 1) player-y))
+    (if (== player-dir [r]) (move-player-to (+ player-x 1) player-y))
+
+    (if pass-or-fail-level-pending (do (pass-or-fail-level) (return true)))
+
+    ;(for i in level (if (starts-with? (find i 'name) [bomb]) (bomb-update i)))
+    (for i in level-updatable-indices (if (starts-with? (nth 0 i) [bomb]) (bomb-update (nth 1 i) dt)))
 
     true))
 
@@ -610,7 +903,7 @@
     (if (== [game]     tmpState) (state-update-game      dt input))
     (if (== [tweenOut] tmpState) (state-update-tween-out dt input))
 
-    ;(if printlevel (level-print))
+    (if printlevel (level-print))
 
     true))
 
@@ -626,16 +919,24 @@
 (level-1)
 
 
+
 ;;; Here are some helper functions for debugging purposes.
 ;;; Can be removed later
 
 (define level-print-slot [...] '(x [x] y [y]) (fn (x y)
-    (define name [name] (level-get x y))
-    (if (== [] name)                     (do (print [ ]) (return nil)))
-    (if (starts-with? name [exit])       (do (print [E]) (return nil)))
-    (if (starts-with? name [player])     (do (print [o]) (return nil)))
-    (if (starts-with? name [wall])       (do (print [X]) (return nil)))
-    (if (starts-with? name [pullable])   (do (print [P]) (return nil)))
+    (define name [name] (find (level-get-slot x y) 'name))
+    (if (== [] name)                       (do (print [  ]) (return nil)))
+    (if (starts-with? name [exit])         (do (print [EX]) (return nil)))
+    (if (starts-with? name [player])       (do (print [:)]) (return nil)))
+    (if (starts-with? name [wall])         (do (print [XX]) (return nil)))
+    (if (starts-with? name [pullable])     (do (print [PP]) (return nil)))
+    (if (starts-with? name [stop-counter]) (do (print [$$]) (return nil)))
+    (if (starts-with? name [key])          (do (print [|bar||bar|]) (return nil)))
+    (if (starts-with? name [bomb])         (do (print [!!]) (return nil)))
+    (if (starts-with? name [slope-en])     (do (print [^_]) (return nil)))
+    (if (starts-with? name [slope-es])     (do (print [|bar|']) (return nil)))
+    (if (starts-with? name [slope-sw])     (do (print ['|bar|]) (return nil)))
+    (if (starts-with? name [slope-nw])     (do (print [_|bar|]) (return nil)))
     (print name)))
 
 (define level-print-row [...] '(y [y]) (fn (y)
@@ -643,11 +944,14 @@
     (println [])))
 
 (define level-print [...] '() (fn ()
-    (for y from (- level-hwidth) to (- level-hwidth 1) (level-print-row y))))
+    (println [-------------------------------------------------])
+    (for y from (- level-hwidth) to (- level-hwidth 1) (level-print-row y))
+    (println [-------------------------------------------------])
+    ))
 
 
 (define level-print-slot-id [...] '(x [x] y [y]) (fn (x y)
-    (define name [name] (level-get x y))
+    (define name [name] (find (level-get-slot x y) 'name))
     (print name)
 
     (define spaces [...] (- 18 (len name)))
@@ -659,4 +963,5 @@
 
 (define level-print-id [...] '() (fn ()
     (for y from (- level-hwidth) to (- level-hwidth 1) (level-print-row-id y))))
+
 

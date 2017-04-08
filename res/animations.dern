@@ -9,6 +9,9 @@
 (animation-entity-define [turnstile-sn-idle]   21)
 (animation-entity-define [turnstile-ns-idle]   22)
 (animation-entity-define [slope-en-idle]       27)
+(animation-entity-define [slope-es-idle]       28)
+(animation-entity-define [slope-nw-idle]       29)
+(animation-entity-define [slope-sw-idle]       30)
 
 (define create-stop-counter-i [.] '(i [i]) (fn (i)
     (define id [id] (string-format [stop-counter-{}] i))
@@ -16,4 +19,9 @@
 
 (for i from 1 to 99 (create-stop-counter-i i))
 
+(define create-bomb-i [.] '(i [i]) (fn (i)
+    (define id [id] (string-format [bomb-{}] i))
+    (animation-entity-define id (+ 230 i))))
+
+(for i from 1 to 99 (create-bomb-i i))
 

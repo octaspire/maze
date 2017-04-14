@@ -1067,15 +1067,11 @@ bool octaspire_maze_state_add_named_animation_of_type_to_position(
 
     octaspire_sdl2_animation_set_position(animation, x, y, z);
 
-    bool const result = octaspire_container_hash_map_put(
+    return octaspire_container_hash_map_put(
         self->animations,
         octaspire_container_utf8_string_get_hash(key),
         &key,
         &animation);
-
-    octaspire_container_utf8_string_release(key);
-    key = 0;
-    return result;
 }
 
 bool octaspire_maze_state_remove_all_animations(

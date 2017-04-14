@@ -1053,7 +1053,7 @@ bool octaspire_maze_state_add_named_animation_of_type_to_position(
     int const y,
     int const z)
 {
-    octaspire_container_utf8_string_t * const key =
+    octaspire_container_utf8_string_t * key =
         octaspire_container_utf8_string_new(name, self->allocator);
 
     /*
@@ -1067,11 +1067,15 @@ bool octaspire_maze_state_add_named_animation_of_type_to_position(
 
     octaspire_sdl2_animation_set_position(animation, x, y, z);
 
-    return octaspire_container_hash_map_put(
+    bool const result = octaspire_container_hash_map_put(
         self->animations,
         octaspire_container_utf8_string_get_hash(key),
         &key,
         &animation);
+
+    octaspire_container_utf8_string_release(key);
+    key = 0;
+    return result;
 }
 
 bool octaspire_maze_state_remove_all_animations(
@@ -1089,7 +1093,7 @@ bool octaspire_maze_state_set_animation_position(
     int const y,
     int const z)
 {
-    octaspire_container_utf8_string_t * const key =
+    octaspire_container_utf8_string_t * key =
         octaspire_container_utf8_string_new(name, self->allocator);
 
     octaspire_container_hash_map_element_t * const element =
@@ -1100,7 +1104,8 @@ bool octaspire_maze_state_set_animation_position(
 
     if (!element)
     {
-        //octaspire_dern_vm_print_stack(self->vm);
+        octaspire_container_utf8_string_release(key);
+        key = 0;
         octaspire_helpers_verify(false);
         return false;
     }
@@ -1112,6 +1117,9 @@ bool octaspire_maze_state_set_animation_position(
 
     octaspire_sdl2_animation_set_position(animation, x, y, z);
 
+    octaspire_container_utf8_string_release(key);
+    key = 0;
+
     return true;
 }
 
@@ -1119,13 +1127,18 @@ bool octaspire_maze_state_remove_named_animation(
     octaspire_maze_state_t * const self,
     char const * const name)
 {
-    octaspire_container_utf8_string_t * const key =
+    octaspire_container_utf8_string_t * key =
         octaspire_container_utf8_string_new(name, self->allocator);
 
-    return octaspire_container_hash_map_remove(
+    bool const result = octaspire_container_hash_map_remove(
         self->animations,
         octaspire_container_utf8_string_get_hash(key),
         &key);
+
+    octaspire_container_utf8_string_release(key);
+    key = 0;
+
+    return result;
 }
 
 bool octaspire_maze_state_is_named_animation_visible(

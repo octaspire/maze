@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 3)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 4)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
@@ -38,8 +38,11 @@ file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/octaspire/maze/*.h")
 file(GLOB MANUAL6 "${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man3/octaspire-dern.6")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_core/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_core/build/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_dern/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_dern/build/include")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 
 

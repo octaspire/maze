@@ -977,7 +977,7 @@ bool octaspire_maze_state_tween_level_out(
 
 void octaspire_maze_state_private_render_layer(
     octaspire_maze_state_t const * const self,
-    size_t const layer,
+    int const layer,
     SDL_Renderer * const renderer,
     octaspire_sdl2_texture_t const * const texture,
     int const origoX,
@@ -1027,7 +1027,7 @@ void octaspire_maze_state_render(
 {
     int newOrigoX = origoX;
 
-    for (size_t i = 0; i < 4; ++i)
+    for (int i = -1; i < 2; ++i)
     {
         octaspire_maze_state_private_render_layer(self, i, renderer, texture, newOrigoX, origoY);
     }

@@ -24,7 +24,11 @@
          'number-of-keys 0
          'current-pullable-x nil
          'current-pullable-y nil
-         'player-was-on-side  [])))
+         'player-was-on-side  []
+         'toggle-e false
+         'toggle-n false
+         'toggle-s false
+         'toggle-w false)))
 
 (define level-init [init level] '() (fn ()
     (for i from 0 to (* level-width level-width) (+= level (make-empty-slot)))))
@@ -105,6 +109,127 @@
 (define bomb-on-collision [should be called when bomb has collision with player] '(name [bomb's name] x [bomb's x] y [bomb's y]) (fn (name x y)
         (define slot [slot at x y, the bomb] (level-get-slot x y))
         (if (find slot 'bomb-started) (bomb-remove name x y) (= slot 'bomb-started true))))
+
+(define toggle-open? [...] '(slot [slot]) (fn (slot)
+    (if (== (find slot 'toggle-e) false) (return true))
+    (if (== (find slot 'toggle-n) false) (return true))
+    (if (== (find slot 'toggle-s) false) (return true))
+    (if (== (find slot 'toggle-w) false) (return true))
+    false
+))
+
+(define toggle-set-correct-animation [...] '(name [name] x [x] y [y]) (fn (name x y)
+        (define slot [slot at x y, the toggle] (level-get-slot x y))
+
+        (define e [e] (find slot 'toggle-e))
+        (define n [e] (find slot 'toggle-n))
+        (define s [e] (find slot 'toggle-s))
+        (define w [e] (find slot 'toggle-w))
+
+        ; 1 none
+        (if (and (not e) (not n) (not s) (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-none-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 2 east
+        (if (and e (not n) (not s) (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-e-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 3 nort
+        (if (and (not e) n (not s) (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-n-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 4 east and north
+        (if (and e n (not s) (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-en-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 5 south only
+        (if (and (not e) (not n) s (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-s-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 6 es
+        (if (and e (not n) s (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-es-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 7 ns
+        (if (and (not e) n s (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-ns-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 8 ens
+        (if (and e n s (not w)) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-ens-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 9 w
+        (if (and (not e) (not n) (not s) w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-w-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 10 ew
+        (if (and e (not n) (not s) w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-ew-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 11 nw
+        (if (and (not e) n (not s) w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-nw-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 12 enw
+        (if (and e n (not s) w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-enw-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 13 sw
+        (if (and (not e) (not n) s w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-sw-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 14 esw
+        (if (and e (not n) s w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-esw-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 15 nsw
+        (if (and (not e) n s w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-nsw-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+
+        ; 16 ensw
+        (if (and e n s w) (do
+            (animation-entity-remove name)
+            (animation-entity-new name [toggle-ensw-idle] '((* 16 x) (* 16 y) 0))
+            (return nil)))
+))
+
+(define toggle-on-collision [should be called when toggle has collision with player] '(name [toggle's name] x [toggle's x] y [toggle's y] pdir [player's dir]) (fn (name x y pdir)
+        (define slot [slot at x y, the toggle] (level-get-slot x y))
+        (if (== pdir [u]) (do (= slot 'toggle-s true) (toggle-set-correct-animation name x y) (return nil)))
+        (if (== pdir [d]) (do (= slot 'toggle-n true) (toggle-set-correct-animation name x y) (return nil)))
+        (if (== pdir [l]) (do (= slot 'toggle-e true) (toggle-set-correct-animation name x y) (return nil)))
+        (if (== pdir [r]) (do (= slot 'toggle-w true) (toggle-set-correct-animation name x y) (return nil)))
+        ))
 
 (define stop-counter-remove [remove the named stop counter at the given coordinates] '(name [name] x [x] y [y]) (fn (name x y)
     (level-set-slot-to-empty x y)
@@ -232,6 +357,7 @@
 
 (define pass-or-fail-level [Move to next level or restart current] '() (fn ()
     (if (< (find (get-player) 'number-of-keys) level-number-of-keys) (do (level-restart) (return nil)))
+    (for slot in level (if (starts-with? (find slot 'name) [toggle]) (if (toggle-open? slot) (do (level-restart) (return nil)))))
     ; Level is passed
     (do (= current-state [tweenOut]) (tween-level-out))))
 
@@ -252,6 +378,7 @@
 
     (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))
     (if (starts-with? name [bomb])         (bomb-on-collision name tx ty))
+    (if (starts-with? name [toggle])       (toggle-on-collision name tx ty dir))
     (if (starts-with? name [key])          (do (key-on-collision name tx ty) (set-player-dir dir)))
     (if (starts-with? name [turnstile-ew]) (turnstile-ew-on-collision name tx ty dir))
     (if (starts-with? name [turnstile-we]) (turnstile-we-on-collision name tx ty dir))
@@ -355,6 +482,26 @@
      (animation-entity-new id [wall-idle] '((* 16 x) (* 16 y) 0))
      (level-set-slot x y (make-empty-slot))
      (define slot [slot at x y, the wall to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-stopper [entity-new-stopper] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [stopper-{}-{}] x y))
+     (animation-entity-new id [stopper-idle] '((* 16 x) (* 16 y) -1))
+     (define slot [slot at x y, the stopper] (make-empty-slot))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     (+= level-updatable-indices id slot)
+     ))
+
+(define entity-new-toggle [entity-new-toggle] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [toggle-{}-{}] x y))
+     (animation-entity-new id [toggle-none-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the toggle] (level-get-slot x y))
      (= slot 'name id)
      (= slot 'x    x)
      (= slot 'y    y)
@@ -769,9 +916,86 @@
 (define level-5 [level-5] '() (fn ()
 
     ; Top row
-    (entity-new-player     -5   0)
-    (entity-new-exit        5   0)
-    (entity-new-bomb        0   0 10)
+    (for i from -6 to 6 (entity-new-stopper i  -6))
+
+    ; 2. row
+    (entity-new-stopper -6 -5)
+    (entity-new-stopper  6 -5)
+
+    ; 3. row
+    (entity-new-stopper -6 -4)
+    (for i from -4 to -2 (entity-new-pullable-ensw i -4))
+    (for i from  2 to  4 (entity-new-pullable-ensw i -4))
+    (entity-new-stopper  6 -4)
+
+    ; 4. row
+    (entity-new-stopper -6 -3)
+    (entity-new-pullable-ensw -4 -3)
+    (entity-new-toggle        -3 -3)
+    (entity-new-pullable-ensw -2 -3)
+    (entity-new-pullable-ensw -1 -3)
+    (entity-new-pullable-ensw  1 -3)
+    (entity-new-pullable-ensw  2 -3)
+    (entity-new-toggle         3 -3)
+    (entity-new-pullable-ensw  4 -3)
+    (entity-new-stopper  6 -3)
+
+    ; 5. row
+    (entity-new-stopper -6 -2)
+    (for i from  -4 to 4 (entity-new-pullable-ensw i -2))
+    (entity-new-stopper  6 -2)
+
+    ; 6. row
+    (entity-new-stopper -6 -1)
+    (for i from  -3 to 3 (entity-new-pullable-ensw i -1))
+    (entity-new-stopper  6 -1)
+
+    ; 7. row
+    (entity-new-stopper -6 0)
+    (entity-new-pullable-ensw -2 0)
+    (entity-new-pullable-ensw -1 0)
+    (entity-new-exit           0 0)
+    (entity-new-pullable-ensw  1 0)
+    (entity-new-pullable-ensw  2 0)
+    (entity-new-stopper  6 0)
+
+    ; 8. row
+    (entity-new-stopper -6 1)
+    (for i from  -3 to 3 (entity-new-pullable-ensw i 1))
+    (entity-new-stopper  6 1)
+
+    ; 9. row
+    (entity-new-stopper -6 2)
+    (for i from  -4 to 4 (entity-new-pullable-ensw i 2))
+    (entity-new-stopper  6 2)
+
+    ; 10. row
+    (entity-new-stopper -6       3)
+    (entity-new-pullable-ensw -4 3)
+    (entity-new-toggle        -3 3)
+    (entity-new-pullable-ensw -2 3)
+    (entity-new-pullable-ensw -1 3)
+    (entity-new-pullable-ensw  1 3)
+    (entity-new-pullable-ensw  2 3)
+    (entity-new-toggle         3 3)
+    (entity-new-pullable-ensw  4 3)
+    (entity-new-stopper        6 3)
+
+    ; 11. row
+    (entity-new-stopper -6 4)
+    (for i from -4 to -2 (entity-new-pullable-ensw i 4))
+    (for i from  2 to  4 (entity-new-pullable-ensw i 4))
+    (entity-new-stopper  6 4)
+
+    ; 12. ro
+    (entity-new-stopper -6 5)
+    (entity-new-stopper  6 5)
+
+    ; 13. row
+    (for i from -6 to 6 (entity-new-stopper i  6))
+
+    ; Bottom row
+    (entity-new-player      0   8)
 
     (= level-current-number 5)))
 
@@ -854,6 +1078,12 @@
                                     '((* 16 (find slot 'x)) (* 16 (find slot 'y)) 0))))
 ))
 
+(define stopper-update [update a stopper] '(slot [slot for the stopper] dt [delta time]) (fn (slot dt)
+    (if (!= player-x (find slot 'x)) (return nil))
+    (if (!= player-y (find slot 'y)) (return nil))
+
+    (set-player-dir nil)))
+
 (define state-update-game [state-update]
                      '(dt [delta time]
                        input [string telling the input, if any: u, d, l, r]) (fn (dt input)
@@ -885,7 +1115,10 @@
     (if pass-or-fail-level-pending (do (pass-or-fail-level) (return true)))
 
     ;(for i in level (if (starts-with? (find i 'name) [bomb]) (bomb-update i)))
-    (for i in level-updatable-indices (if (starts-with? (nth 0 i) [bomb]) (bomb-update (nth 1 i) dt)))
+    (for i in level-updatable-indices
+        (if (starts-with? (nth 0 i) [bomb])    (bomb-update    (nth 1 i) dt))
+        (if (starts-with? (nth 0 i) [stopper]) (stopper-update (nth 1 i) dt))
+        )
 
     true))
 
@@ -916,7 +1149,7 @@
     (= current-state [game])))
 
 ; Game starts here
-(level-1)
+(level-5)
 
 
 

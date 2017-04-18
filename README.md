@@ -12,6 +12,18 @@ cmake ..
 make
 ```
 
+To build on Ubuntu (16.04 LTS)
+
+```shell
+sudo add-apt-repository universe
+sudo apt-get update
+sudo apt-get install cmake git libsdl2-dev libsdl2-image-dev
+git clone https://github.com/octaspire/maze.git
+cd maze/build
+cmake ..
+make
+```
+
 To run the unit tests:
 
 ```shell

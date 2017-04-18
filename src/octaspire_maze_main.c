@@ -193,6 +193,8 @@ void octaspire_maze_print_message_c_str(
     {
         printf(ANSI_COLOR_RESET);
     }
+
+    printf("\n");
 }
 
 void octaspire_maze_print_message(
@@ -212,8 +214,6 @@ void octaspire_maze_print_version(bool const useColors)
         OCTASPIRE_MAZE_CONFIG_VERSION_STR,
         OCTASPIRE_MAZE_MESSAGE_INFO,
         useColors);
-
-    printf("\n");
 }
 
 void octaspire_maze_print_banner(bool const useColors)
@@ -236,7 +236,7 @@ void octaspire_maze_print_banner(bool const useColors)
     octaspire_maze_print_message_c_str(
         "Licensed under the Apache License, Version 2.0\n"
         "Distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES\n"
-        "OR CONDITIONS OF ANY KIND.\n\n",
+        "OR CONDITIONS OF ANY KIND.\n",
         OCTASPIRE_MAZE_MESSAGE_INFO, useColors);
 
 }
@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
         if (!region)
         {
             octaspire_maze_print_message_c_str(
-                "Allocation failure\n",
+                "Allocation failure",
                 OCTASPIRE_MAZE_MESSAGE_FATAL,
                 useColors);
 
@@ -322,7 +322,7 @@ int main(int argc, char *argv[])
     if (!allocator)
     {
         octaspire_maze_print_message_c_str(
-            "Allocation failure\n",
+            "Allocation failure",
             OCTASPIRE_MAZE_MESSAGE_FATAL,
             useColors);
 
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         octaspire_maze_print_message_c_str(
-            "SDL2 init failed:\n",
+            "SDL2 init failed:",
             OCTASPIRE_MAZE_MESSAGE_FATAL,
             useColors);
 
@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
     if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
     {
         octaspire_maze_print_message_c_str(
-            "Cannot set hint\n",
+            "Cannot set hint",
             OCTASPIRE_MAZE_MESSAGE_INFO,
             useColors);
     }
@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
     if (!window)
     {
         octaspire_maze_print_message_c_str(
-            "SDL2 window creation failed:\n",
+            "SDL2 window creation failed:",
             OCTASPIRE_MAZE_MESSAGE_FATAL,
             useColors);
 
@@ -392,7 +392,7 @@ int main(int argc, char *argv[])
         if (SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN) < 0)
         {
             octaspire_maze_print_message_c_str(
-                "Entering fullscreen failed\n",
+                "Entering fullscreen failed",
                 OCTASPIRE_MAZE_MESSAGE_FATAL,
                 useColors);
 
@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
     if (!renderer)
     {
         octaspire_maze_print_message_c_str(
-            "SDL2 renderer creation failed:\n",
+            "SDL2 renderer creation failed:",
             OCTASPIRE_MAZE_MESSAGE_FATAL,
             useColors);
 
@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
     {
         octaspire_maze_print_message_c_str(
-            "SDL2 image initialization failed:\n",
+            "SDL2 image initialization failed:",
             OCTASPIRE_MAZE_MESSAGE_FATAL,
             useColors);
 

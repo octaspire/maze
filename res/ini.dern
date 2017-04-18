@@ -1149,7 +1149,7 @@
     (= current-state [game])))
 
 ; Game starts here
-(level-5)
+(level-1)
 
 
 

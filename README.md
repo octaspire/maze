@@ -24,6 +24,16 @@ cmake ..
 make
 ```
 
+To build on Arch Linux (Arch Linux ARM):
+
+```shell
+sudo pacman -S cmake git gcc make sdl2 sdl2_image
+git clone https://github.com/octaspire/maze.git
+cd maze/build
+cmake ..
+make
+```
+
 To run the unit tests:
 
 ```shell

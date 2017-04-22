@@ -1247,7 +1247,9 @@
 
 
 (define state-on-tween-out-done [...] '() (fn ()
-    (level-next)))
+    ;(message-show 0)
+    (level-next)
+    ))
 
 (define state-on-tween-in-done [...] '() (fn ()
 

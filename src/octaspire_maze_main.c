@@ -2,16 +2,15 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <octaspire/dern/octaspire_dern_vm.h>
 #include <octaspire/dern/octaspire_dern_config.h>
 #include <octaspire/core/octaspire_memory.h>
 #include <octaspire/core/octaspire_region.h>
 #include <octaspire/core/octaspire_helpers.h>
-#include "octaspire/maze/octaspire_sdl2_texture.h"
-#include "octaspire/maze/octaspire_sdl2_animation.h"
+#include <octaspire/sdl2-utils/octaspire_sdl2_texture.h>
+#include <octaspire/sdl2-utils/octaspire_sdl2_animation.h>
+#include <octaspire/easing/octaspire_easing.h>
 #include "octaspire/maze/octaspire_maze_game.h"
-#include "octaspire/maze/octaspire_easing.h"
 #include "octaspire/maze/octaspire_maze_input.h"
 #include "octaspire/maze/octaspire_maze_config.h"
 #include "external/octaspire_maze_banner_color.h"
@@ -26,6 +25,82 @@ extern size_t const octaspire_maze_animations_len;
 extern char   const octaspire_maze_texture_entities[];
 extern size_t const octaspire_maze_texture_entities_len;
 
+extern char   const octaspire_maze_texture_messages[];
+extern size_t const octaspire_maze_texture_messages_len;
+
+octaspire_dern_value_t *octaspire_maze_api_message_show(
+    octaspire_dern_vm_t *vm,
+    octaspire_dern_value_t *arguments,
+    octaspire_dern_value_t *environment)
+{
+    size_t const stackLength = octaspire_dern_vm_get_stack_length(vm);
+
+    octaspire_helpers_verify(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
+    octaspire_helpers_verify(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
+
+    size_t const numArgs = octaspire_dern_value_get_length(arguments);
+
+    if (numArgs != 1)
+    {
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "Builtin 'message-show' expects one argument. %zu arguments were given.",
+            octaspire_dern_value_get_length(arguments));
+    }
+
+    octaspire_dern_vm_push_value(vm, arguments);
+
+    // Index
+    octaspire_dern_value_t * const indexVal =
+        octaspire_dern_value_as_vector_get_element_at(
+            arguments,
+            0);
+
+    if (indexVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        if (indexVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+        {
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return indexVal;
+        }
+
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "First and only argument to builtin 'message-show' must be integer value. "
+            "Now it has type %s.",
+            octaspire_dern_value_helper_get_type_as_c_string(indexVal->typeTag));
+    }
+
+    if (indexVal->value.integer < 0)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "First and only argument to builtin 'message-show' must be non negative integer value. "
+            "Now it is %" PRId32 ".",
+            indexVal->value.integer);
+    }
+
+    size_t const messageIndex = indexVal->value.integer;
+
+    octaspire_dern_vm_pop_value(vm, arguments);
+
+    octaspire_maze_game_t *game = (octaspire_maze_game_t*)octaspire_dern_vm_get_user_data(vm);
+
+    if (!octaspire_maze_game_show_message(game, messageIndex))
+    {
+        abort();
+    }
+
+    octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+    return octaspire_dern_vm_get_value_true(vm);
+}
 
 octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
     octaspire_dern_vm_t *vm,
@@ -76,6 +151,7 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 
     octaspire_sdl2_animation_t *animation = octaspire_sdl2_animation_new(
         octaspire_container_utf8_string_get_c_string(animNameVal->value.string),
+        false,
         octaspire_dern_vm_get_allocator(vm));
 
     // Frame indices
@@ -444,6 +520,15 @@ int main(int argc, char *argv[])
         octaspire_maze_texture_entities,
         octaspire_maze_texture_entities_len,
         "test-texture",
+        true,
+        renderer,
+        allocator);
+
+    octaspire_sdl2_texture_t *textureMessages = octaspire_sdl2_texture_new_from_buffer(
+        octaspire_maze_texture_messages,
+        octaspire_maze_texture_messages_len,
+        "messages-texture",
+        false,
         renderer,
         allocator);
 
@@ -453,6 +538,17 @@ int main(int argc, char *argv[])
         octaspire_maze_api_animation_entity_define,
         5,
         "Create new kind of animation from texture atlas with fixed sprite sizes",
+        octaspire_dern_vm_get_global_environment(vm)->value.environment))
+    {
+        abort();
+    }
+
+    if (!octaspire_dern_vm_create_and_register_new_builtin(
+        vm,
+        "message-show",
+        octaspire_maze_api_message_show,
+        1,
+        "Show message with the given index",
         octaspire_dern_vm_get_global_environment(vm)->value.environment))
     {
         abort();
@@ -569,12 +665,15 @@ int main(int argc, char *argv[])
         origoY = winH * 0.5;
 
         octaspire_maze_game_update(game, deltaTime, input, winW, winH);
-        octaspire_maze_game_render(game, renderer, texture, origoX, origoY);
+        octaspire_maze_game_render(game, renderer, texture, textureMessages, origoX, origoY);
         SDL_RenderPresent(renderer);
     }
 
     octaspire_sdl2_texture_release(texture);
     texture = 0;
+
+    octaspire_sdl2_texture_release(textureMessages);
+    textureMessages = 0;
 
     SDL_DestroyRenderer(renderer);
     renderer = 0;

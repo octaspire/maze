@@ -13,6 +13,7 @@ struct octaspire_maze_game_t
     octaspire_memory_allocator_t   *allocator;
     octaspire_container_hash_map_t *animations;
     octaspire_container_vector_t   *states;
+    octaspire_container_vector_t   *messageQueue;
 };
 
 octaspire_maze_game_t *octaspire_maze_game_new(
@@ -59,6 +60,19 @@ octaspire_maze_game_t *octaspire_maze_game_new(
         return self;
     }
 
+    self->messageQueue = octaspire_container_vector_new(
+        sizeof(size_t),
+        false,
+        0,
+        allocator);
+
+    if (!self->messageQueue)
+    {
+        octaspire_maze_game_release(self);
+        self = 0;
+        return self;
+    }
+
     return self;
 }
 
@@ -71,6 +85,7 @@ void octaspire_maze_game_release(octaspire_maze_game_t *self)
 
     octaspire_container_hash_map_release(self->animations);
     octaspire_container_vector_release(self->states);
+    octaspire_container_vector_release(self->messageQueue);
     octaspire_memory_allocator_free(self->allocator, self);
 }
 
@@ -111,6 +126,7 @@ void octaspire_maze_game_render(
     octaspire_maze_game_t const * const self,
     SDL_Renderer * const renderer,
     octaspire_sdl2_texture_t const * const texture,
+    octaspire_sdl2_texture_t const * const textureMessages,
     int const origoX,
     int const origoY)
 {
@@ -118,6 +134,28 @@ void octaspire_maze_game_render(
     {
         octaspire_maze_state_t *state = octaspire_container_vector_peek_back_element(self->states);
         octaspire_maze_state_render(state, renderer, texture, origoX, origoY);
+    }
+
+    if (!octaspire_container_vector_is_empty(self->messageQueue))
+    {
+
+        size_t const messageIndex =
+            *(size_t * const)octaspire_container_vector_peek_back_element_const(self->messageQueue);
+
+        SDL_Rect rect;
+        rect.x = (messageIndex % 4) * 512;
+        rect.y = (messageIndex / 4) * 128;
+        rect.w = 512;
+        rect.h = 128;
+
+        octaspire_sdl2_texture_render_at_position_clip(
+            textureMessages,
+            renderer,
+            0,
+            0,
+            100,
+            100,
+            &rect);
     }
 }
 
@@ -161,5 +199,12 @@ octaspire_maze_state_t *octaspire_maze_game_get_current_state(
     octaspire_maze_game_t * const self)
 {
     return octaspire_container_vector_peek_back_element(self->states);
+}
+
+bool octaspire_maze_game_show_message(
+    octaspire_maze_game_t * const self,
+    size_t const index)
+{
+    return octaspire_container_vector_push_front_element(self->messageQueue, &index);
 }
 

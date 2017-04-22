@@ -1,10 +1,10 @@
 #include <assert.h>
-#include "octaspire/core/octaspire_helpers.h"
+#include <octaspire/easing/octaspire_easing.h>
+#include <octaspire/core/octaspire_container_hash_map.h>
+#include <octaspire/core/octaspire_helpers.h>
+#include <octaspire/dern/octaspire_dern_vm.h>
 #include "octaspire/maze/octaspire_maze_state.h"
 #include "octaspire/maze/octaspire_maze_game.h"
-#include "octaspire/maze/octaspire_easing.h"
-#include <octaspire/core/octaspire_container_hash_map.h>
-#include <octaspire/dern/octaspire_dern_vm.h>
 #include "octaspire/maze/octaspire_maze_input.h"
 
 typedef enum octaspire_maze_state_tween_direction_t

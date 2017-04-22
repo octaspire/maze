@@ -8,3 +8,13 @@
     url = https://github.com/octaspire/core.git
     branch = master
     ignore = dirty
+[submodule "external/octaspire_easing"]
+	path = external/octaspire_easing
+	url = https://github.com/octaspire/easing.git
+    branch = master
+    ignore = dirty
+[submodule "external/octaspire_sdl2_utils"]
+	path = external/octaspire_sdl2_utils
+	url = https://github.com/octaspire/sdl2-utils.git
+    branch = master
+    ignore = dirty

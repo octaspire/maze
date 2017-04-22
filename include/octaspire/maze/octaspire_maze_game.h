@@ -2,7 +2,7 @@
 #define OCTASPIRE_MAZE_GAME_H
 
 #include <stdbool.h>
-#include "octaspire/maze/octaspire_sdl2_animation.h"
+#include <octaspire/sdl2-utils/octaspire_sdl2_animation.h>
 #include "octaspire/maze/octaspire_maze_state.h"
 #include "octaspire/maze/octaspire_maze_input.h"
 
@@ -33,6 +33,7 @@ void octaspire_maze_game_render(
     octaspire_maze_game_t const * const self,
     SDL_Renderer * const renderer,
     octaspire_sdl2_texture_t const * const texture,
+    octaspire_sdl2_texture_t const * const textureMessages,
     int const origoX,
     int const origoY);
 
@@ -46,6 +47,10 @@ bool octaspire_maze_game_push_back_state(
 
 octaspire_maze_state_t *octaspire_maze_game_get_current_state(
     octaspire_maze_game_t * const self);
+
+bool octaspire_maze_game_show_message(
+    octaspire_maze_game_t * const self,
+    size_t const index);
 
 
 #ifdef __cplusplus

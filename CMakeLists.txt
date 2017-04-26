@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 16)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 17)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
@@ -55,7 +55,7 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 add_executable(octaspire-xxd "${CMAKE_CURRENT_SOURCE_DIR}/etc/octaspire_xxd.c")
 set_property(TARGET octaspire-xxd PROPERTY C_STANDARD 99)
 set_property(TARGET octaspire-xxd PROPERTY C_EXTENSIONS OFF)
-target_link_libraries(octaspire-xxd octaspire_core m)
+target_link_libraries(octaspire-xxd octaspire-core m)
 
 option(OCTASPIRE_MAZE_COVERAGE "OCTASPIRE_MAZE_COVERAGE" OFF)
 
@@ -79,7 +79,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fcolor-diagnostics")
 endif(CMAKE_C_COMPILER_ID MATCHES "Clang")
 
-target_link_libraries(octaspire-maze ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} octaspire-easing octaspire-sdl2-utils octaspire_dern octaspire_core m)
+target_link_libraries(octaspire-maze ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} octaspire-easing octaspire-sdl2-utils octaspire-dern octaspire-core m)
 install(TARGETS octaspire-maze DESTINATION bin)
 install(FILES ${MANUAL6} DESTINATION "man/man6")
 

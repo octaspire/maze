@@ -17,6 +17,6 @@ if(OCTASPIRE_MAZE_COVERAGE)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
 endif(OCTASPIRE_MAZE_COVERAGE)
 
-target_link_libraries(octaspire-maze-test-runner octaspire_dern octaspire_core)
+target_link_libraries(octaspire-maze-test-runner octaspire-dern octaspire-core)
 
 add_test(octaspire-maze-test-runner octaspire-maze-test-runner)

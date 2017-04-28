@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 18)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 19)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
@@ -32,9 +32,8 @@ add_subdirectory(external/octaspire_sdl2_utils)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external/cmake")
 
 find_package(SDL2       REQUIRED)
-find_package(SDL2_image REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIR})
 
 file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/octaspire/maze/*.h")
@@ -64,7 +63,7 @@ if(OCTASPIRE_MAZE_COVERAGE)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
 endif(OCTASPIRE_MAZE_COVERAGE)
 
-add_executable(octaspire-maze ${SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_messages.c")
+add_executable(octaspire-maze ${SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c")
 set_property(TARGET octaspire-maze PROPERTY C_STANDARD 99)
 set_property(TARGET octaspire-maze PROPERTY C_EXTENSIONS OFF)
 
@@ -79,7 +78,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fcolor-diagnostics")
 endif(CMAKE_C_COMPILER_ID MATCHES "Clang")
 
-target_link_libraries(octaspire-maze ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} octaspire-easing octaspire-sdl2-utils octaspire-dern octaspire-core m)
+target_link_libraries(octaspire-maze ${SDL2_LIBRARY} octaspire-easing octaspire-sdl2-utils octaspire-dern octaspire-core m)
 install(TARGETS octaspire-maze DESTINATION bin)
 install(FILES ${MANUAL6} DESTINATION "man/man6")
 
@@ -97,16 +96,9 @@ add_custom_command(
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c"
-    COMMAND octaspire-xxd octaspire_maze_texture_entities "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.png"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.png" octaspire-xxd
+    COMMAND octaspire-xxd octaspire_maze_texture_entities "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.bmp"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.bmp" octaspire-xxd
     COMMENT "Building header for resource: entities")
-
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_messages.c"
-    COMMAND octaspire-xxd octaspire_maze_texture_messages "${CMAKE_CURRENT_SOURCE_DIR}/res/messages.png"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/res/messages.png" octaspire-xxd
-    COMMENT "Building header for resource: messages")
-
 
 add_custom_target(
     cppcheck-maze

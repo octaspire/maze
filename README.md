@@ -64,5 +64,5 @@ Homepage of Octaspire Maze can be found from here:
 
 Video of building the game from source, and playing couple of levels:
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rPrkX2QV-Xg" frameborder="0" allowfullscreen></iframe>
+[![Link to youtube video](https://img.youtube.com/vi/rPrkX2QV-Xg/0.jpg)](https://www.youtube.com/watch?v=rPrkX2QV-Xg)
 

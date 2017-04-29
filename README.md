@@ -6,7 +6,7 @@ Game written in programming languages Dern and standard C99
 To build on Raspberry Pi or Debian:
 
 ```shell
-sudo apt-get install cmake git libsdl2-dev libsdl2-image-dev
+sudo apt-get install cmake git libsdl2-dev
 git clone https://github.com/octaspire/maze.git
 cd maze/build
 cmake ..
@@ -18,7 +18,7 @@ To build on Ubuntu (16.04 LTS)
 ```shell
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get install cmake git libsdl2-dev libsdl2-image-dev
+sudo apt-get install cmake git libsdl2-dev
 git clone https://github.com/octaspire/maze.git
 cd maze/build
 cmake ..
@@ -28,10 +28,20 @@ make
 To build on Arch Linux (Arch Linux ARM):
 
 ```shell
-sudo pacman -S cmake git gcc make sdl2 sdl2_image
+sudo pacman -S cmake git gcc make sdl2
 git clone https://github.com/octaspire/maze.git
 cd maze/build
 cmake ..
+make
+```
+
+To build on Haiku (Version Walter (Revision hrev51127) x86_gcc2):
+
+```shell
+pkgman install gcc_x86 cmake_x86 libsdl2_x86_devel
+git clone https://github.com/octaspire/maze.git
+cd maze/build
+CC=gcc-x86 cmake ..
 make
 ```
 

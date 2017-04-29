@@ -59,3 +59,10 @@ To start the game:
 If you want to know more about Octaspire Dern, the language manual can be found from here:
 [http://www.octaspire.com/dern](http://www.octaspire.com/dern)
 
+Homepage of Octaspire Maze can be found from here:
+[http://www.octaspire.com/maze](http://www.octaspire.com/maze)
+
+Video of building the game from source, and playing couple of levels:
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/rPrkX2QV-Xg" frameborder="0" allowfullscreen></iframe>
+

@@ -248,6 +248,7 @@ void octaspire_maze_print_usage(char const * const binaryName, bool const useCol
     printf("\nwhere [option] is one of the values listen below\n\n");
     printf("-u  --use-region-allocator : use region allocator insteead regular malloc/free\n");
     printf("-f  --fullscreen           : start in fullscreen mode\n");
+    printf("-s  --software-renderer    : use software renderer\n");
     printf("-c  --color-diagnostics    : use colors on unix like systems\n");
     printf("-v  --version              : print version information and exit\n");
     printf("-h  --help                 : print this help message and exit\n");
@@ -258,6 +259,7 @@ int main(int argc, char *argv[])
     bool useColors             = false;
     bool useRegionAllocator    = false;
     bool startInFullscreenMode = false;
+    bool useSoftwareRenderer   = false;
 
     if (argc > 1)
     {
@@ -274,6 +276,10 @@ int main(int argc, char *argv[])
             else if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--fullscreen") == 0)
             {
                 startInFullscreenMode = true;
+            }
+            else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--software-renderer") == 0)
+            {
+                useSoftwareRenderer = true;
             }
             else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
             {
@@ -353,12 +359,15 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+    if (!useSoftwareRenderer)
     {
-        octaspire_maze_print_message_c_str(
-            "Cannot set hint",
-            OCTASPIRE_MAZE_MESSAGE_INFO,
-            useColors);
+        if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+        {
+            octaspire_maze_print_message_c_str(
+                "Cannot set hint",
+                OCTASPIRE_MAZE_MESSAGE_INFO,
+                useColors);
+        }
     }
 
     SDL_Window *window = SDL_CreateWindow(
@@ -400,12 +409,24 @@ int main(int argc, char *argv[])
         }
     }
 
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    SDL_Renderer *renderer = 0;
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(
-        window,
-        -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (useSoftwareRenderer)
+    {
+        renderer = SDL_CreateRenderer(
+            window,
+            -1,
+            SDL_RENDERER_SOFTWARE);
+    }
+    else
+    {
+        SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+
+        renderer = SDL_CreateRenderer(
+            window,
+            -1,
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    }
 
     if (!renderer)
     {
@@ -541,19 +562,18 @@ int main(int argc, char *argv[])
             }
         }
 
-        //SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-        SDL_RenderClear(renderer);
-
         int winW = 0;
         int winH = 0;
 
         SDL_GetWindowSize(window, &winW, &winH);
 
+        octaspire_maze_game_update(game, deltaTime, input, winW, winH);
+
         origoX = winW * 0.5;
         origoY = winH * 0.5;
 
-        octaspire_maze_game_update(game, deltaTime, input, winW, winH);
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+        SDL_RenderClear(renderer);
         octaspire_maze_game_render(game, renderer, texture, origoX, origoY);
         SDL_RenderPresent(renderer);
     }

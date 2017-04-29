@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 20)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 21)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
@@ -28,12 +28,6 @@ message("== Build type is ${CMAKE_BUILD_TYPE}")
 add_subdirectory(external/octaspire_dern)
 add_subdirectory(external/octaspire_easing)
 add_subdirectory(external/octaspire_sdl2_utils)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external/cmake")
-
-find_package(SDL2       REQUIRED)
-
-include_directories(${SDL2_INCLUDE_DIR})
 
 file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/octaspire/maze/*.h")
@@ -78,7 +72,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fcolor-diagnostics")
 endif(CMAKE_C_COMPILER_ID MATCHES "Clang")
 
-target_link_libraries(octaspire-maze ${SDL2_LIBRARY} octaspire-easing octaspire-sdl2-utils octaspire-dern octaspire-core m)
+target_link_libraries(octaspire-maze octaspire-easing octaspire-sdl2-utils octaspire-dern octaspire-core m)
 install(TARGETS octaspire-maze DESTINATION bin)
 install(FILES ${MANUAL6} DESTINATION "man/man6")
 

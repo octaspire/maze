@@ -4,9 +4,9 @@ uses external/greatest.h that is ISC licensed. This file is not the original ver
 but contains modifications by octaspire. These modifications are also ICS licensed.
 Octaspire Dern uses Octaspire Core and Octaspire Dern that are licensed under
 the Apache License, Version 2.0. For fast hash calculation Octaspire Core uses
-MurmurHash3 that is placed in the public domain. To find SDL2 a CMake module
-is used from external/cmake. Easing library is based on  Robert Penner's
-'penner_easing_as1.txt'.
+MurmurHash3 that is placed in the public domain. To find SDL2 octaspire_sdl2_utils
+uses a CMake module from external/octaspire_sdl2_utils/external/cmake.
+Easing library is based on  Robert Penner's 'penner_easing_as1.txt'.
 All licenses and public domain waiver are listed here:
 
 
@@ -370,39 +370,44 @@ Apache License, Version 2.0
 
 
 ---------------------------------------------------------------------------------------
-License of external/cmake/FindSDL2.cmake
+License of external/octaspire_sdl2_utils/external/cmake/FindSDL2.cmake
 ---------------------------------------------------------------------------------------
-   Modified by Eric Wing.
-   Added code to assist with automated building by using environmental variables
-   and providing a more controlled/consistent search behavior.
-   Added new modifications to recognize OS X frameworks and
-   additional Unix paths (FreeBSD, etc).
-   Also corrected the header search path to follow "proper" SDL guidelines.
-   Added a search for SDL2main which is needed by some platforms.
-   Added a search for threads which is needed by some platforms.
-   Added needed compile switches for MinGW.
+    Modified by Eric Wing.
+    Added code to assist with automated building by using environmental variables
+    and providing a more controlled/consistent search behavior.
+    Added new modifications to recognize OS X frameworks and
+    additional Unix paths (FreeBSD, etc).
+    Also corrected the header search path to follow "proper" SDL2 guidelines.
+    Added a search for SDL2main which is needed by some platforms.
+    Added a search for threads which is needed by some platforms.
+    Added needed compile switches for MinGW.
 
-   On OSX, this will prefer the Framework version (if found) over others.
-   People will have to manually change the cache values of
-   SDL2_LIBRARY to override this selection or set the CMake environment
-   CMAKE_INCLUDE_PATH to modify the search paths.
+    On OSX, this will prefer the Framework version (if found) over others.
+    People will have to manually change the cache values of
+    SDL2_LIBRARY to override this selection or set the CMake environment
+    CMAKE_INCLUDE_PATH to modify the search paths.
 
-   Note that the header path has changed from SDL2/SDL.h to just SDL.h
-   This needed to change because "proper" SDL convention
-   is #include "SDL.h", not <SDL2/SDL.h>. This is done for portability
-   reasons because not all systems place things in SDL2/ (see FreeBSD).
+    Note that the header path has changed from SDL2/SDL.h to just SDL.h
+    This needed to change because "proper" SDL2 convention
+    is #include "SDL.h", not <SDL2/SDL.h>. This is done for portability
+    reasons because not all systems place things in SDL2/ (see FreeBSD).
 
-   =============================================================================
-   Copyright 2003-2009 Kitware, Inc.
+    Ported by Johnny Patterson. This is a literal port for SDL2 of the FindSDL.cmake
+    module with the minor edit of changing "SDL" to "SDL2" where necessary. This
+    was not created for redistribution, and exists temporarily pending official
+    SDL2 CMake modules.
 
-   Distributed under the OSI-approved BSD License (the "License");
-   see accompanying file Copyright.txt for details.
+    =============================================================================
+    Copyright 2003-2009 Kitware, Inc.
 
-   This software is distributed WITHOUT ANY WARRANTY; without even the
-   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-   See the License for more information.
-   =============================================================================
-   (To distribute this file outside of CMake, substitute the full
-   License text for the above reference.)
+    Distributed under the OSI-approved BSD License (the "License");
+    see accompanying file Copyright.txt for details.
+
+    This software is distributed WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the License for more information.
+    =============================================================================
+    (To distribute this file outside of CMake, substitute the full
+    License text for the above reference.)
 ---------------------------------------------------------------------------------------
 

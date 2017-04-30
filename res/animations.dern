@@ -36,6 +36,12 @@
 
 (for i from 1 to 10 (create-stop-counter-i i))
 
+(define create-pass-counter-i [.] '(i [i]) (fn (i)
+    (define id [id] (string-format [pass-counter-{}] i))
+    (animation-entity-define id (+ 31 i))))
+
+(for i from 1 to 10 (create-pass-counter-i i))
+
 (define create-bomb-i [.] '(i [i]) (fn (i)
     (define id [id] (string-format [bomb-{}] i))
     (animation-entity-define id (+ 52 i))))

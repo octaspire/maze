@@ -1,4 +1,5 @@
 (define level [level] '())
+(define pass-counters [pass counters of the level] (hash-map))
 (define level-width  [level-width] 20)
 (define level-hwidth [level half width] (to-integer (* level-width 0.5)))
 (define level-current-number [current level number] nil)
@@ -26,7 +27,8 @@
          'toggle-e false
          'toggle-n false
          'toggle-s false
-         'toggle-w false)))
+         'toggle-w false
+         'decreasePending false)))
 
 (define level-init [init level] '() (fn ()
     (for i from 0 to (* level-width level-width) (+= level (make-empty-slot)))))
@@ -44,6 +46,7 @@
     ; TODO why this doesn't work?
     ;(for i from 0 to (* level-width level-width) (= (nth level i) 'name []))
     (for i in level (= i 'name []))
+    (= pass-counters (hash-map))
     ))
 
 (define coordinates-to-index [...] '(x [x] y [y]) (fn (x y)
@@ -591,6 +594,53 @@
      (= slot 'y    y)
      ))
 
+(define entity-new-pass-counter [entity-new-pass-counter] '(x [x-coordinate] y [y-coordinate] count [current count]) (fn (x y count)
+     (define id [id] (string-format [pass-counter-{}-{}] x y))
+     (animation-entity-new id (string-format [pass-counter-{}] count) '((* 16 x) (* 16 y) 1))
+     ;(level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the pass-counter to be] (make-empty-slot))
+     (= slot 'count count)
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     (+= pass-counters id slot)
+     ))
+
+(define pass-counter-decrease [decrease a pass counter] '(slot [slot for the pass counter]) (fn (slot)
+    (define count [count] (find slot 'count))
+    (define name  [name]  (find slot 'name))
+
+    (if (== 1 count)
+        (do
+            (entity-new-wall (find slot 'x) (find slot 'y))
+            (animation-entity-remove name)
+            (-= pass-counters name)
+            (return nil)))
+
+    (-- count)
+    (= slot 'count count)
+    (= slot 'decreasePending false)
+
+    (animation-entity-remove name)
+
+    (animation-entity-new
+        name
+        (string-format [pass-counter-{}] count)
+        '((* 16 (find slot 'x)) (* 16 (find slot 'y)) 1))
+    ))
+
+(define pass-counter-update [update a pass counter] '(slot [slot for the pass counter] dt [delta time]) (fn (slot dt)
+    (define x               [x]   (find slot 'x))
+    (define y               [y]   (find slot 'y))
+    (define decreasePending [tmp] (find slot 'decreasePending))
+
+    (if decreasePending
+        (do
+            (if (or (!= player-x x) (!= player-y y)) (pass-counter-decrease slot))
+            (return nil)))
+
+    (if (and (== player-x x) (== player-y y)) (= slot 'decreasePending true))))
+
 (define entity-new-bomb [entity-new-bomb] '(x [x-coordinate] y [y-coordinate] count [current count]) (fn (x y count)
      (define id [id] (string-format [bomb-{}-{}] x y))
      (animation-entity-new id (string-format [bomb-{}] count) '((* 16 x) (* 16 y) 0))
@@ -670,6 +720,47 @@
     (= level-current-number 1)))
 
 (define level-2 [level-2] '() (fn ()
+    ; Top row
+    (entity-new-slope-es   0 -4)
+    (entity-new-slope-sw   5 -4)
+
+    ; 2. row
+    ;-
+
+    ; 3. row
+    (entity-new-bomb      -4 -2 5)
+
+    ; 4. row
+    (entity-new-exit         -6 -1)
+    (entity-new-turnstile-ns -3 -1)
+    (entity-new-player        0 -1)
+    (entity-new-pass-counter  5 -1 2)
+
+    ; 5. row
+    (entity-new-wall          3 0)
+
+    ; 6. row
+    (entity-new-wall         -2 1)
+
+    ; 7. row
+    (entity-new-wall         -5 2)
+    (entity-new-wall          2 2)
+
+    ; 8. row
+    (entity-new-key          -3 3)
+
+    ; 9. row
+    (entity-new-wall         -3 4)
+    (entity-new-slope-en      0 4)
+    (entity-new-slope-nw      5 4)
+
+    ; 10. row
+    (entity-new-wall         -1 5)
+
+    (= level-current-number 2)
+))
+
+(define level-3 [level-3] '() (fn ()
 
     ; Top row
     (entity-new-wall      -7  -7)
@@ -742,9 +833,9 @@
     (entity-new-player        -8   7)
     (entity-new-wall          -1   7)
 
-    (= level-current-number 2)))
+    (= level-current-number 3)))
 
-(define level-3 [level-3] '() (fn ()
+(define level-4 [level-4] '() (fn ()
 
     ; top row
     (for i from -8 to 0 (entity-new-wall i -6))
@@ -835,9 +926,9 @@
     ; Bottom row
     (for i from -7 to 7 (entity-new-wall i 5))
 
-    (= level-current-number 3)))
+    (= level-current-number 4)))
 
-(define level-4 [level-4] '() (fn ()
+(define level-5 [level-5] '() (fn ()
 
     ; Top row
     (entity-new-exit          0  -9)
@@ -884,9 +975,9 @@
 
     (entity-new-exit 0 9)
 
-    (= level-current-number 4)))
+    (= level-current-number 5)))
 
-(define level-5 [level-5] '() (fn ()
+(define level-6 [level-6] '() (fn ()
 
     ; Top row
     (for i from -6 to 6 (entity-new-stopper i  -6))
@@ -970,9 +1061,9 @@
     ; Bottom row
     (entity-new-player      0   8)
 
-    (= level-current-number 5)))
+    (= level-current-number 6)))
 
-(define level-6 [level-6] '() (fn ()
+(define level-7 [level-7] '() (fn ()
 
     ; Top row
     (for i from -6 to 6 (entity-new-wall i -6))
@@ -1030,9 +1121,9 @@
     (entity-new-exit 0 6)
     (for i from  1 to  6 (entity-new-wall i 6))
 
-    (= level-current-number 6)))
+    (= level-current-number 7)))
 
-(define level-7 [level-7] '() (fn ()
+(define level-8 [level-8] '() (fn ()
 
     ; Top row
     (for i from -8 to 8 (entity-new-pullable-ensw i -8))
@@ -1087,7 +1178,7 @@
     (for i from -8 to 8 (entity-new-pullable-ensw i 8))
 
 
-    (= level-current-number 7)))
+    (= level-current-number 8)))
 
 
 (define level-restart [restart level] '() (fn ()
@@ -1104,6 +1195,7 @@
     (if (== 5 lnum) (level-5))
     (if (== 6 lnum) (level-6))
     (if (== 7 lnum) (level-7))
+    (if (== 8 lnum) (level-8))
 
     (shake)))
 
@@ -1121,7 +1213,8 @@
     (if (== 4 lnum) (level-5))
     (if (== 5 lnum) (level-6))
     (if (== 6 lnum) (level-7))
-    (if (== 7 lnum) (level-1))
+    (if (== 7 lnum) (level-8))
+    (if (== 8 lnum) (level-1))
 
     ))
 
@@ -1224,6 +1317,11 @@
         (if (starts-with? (nth 0 i) [stopper])       (stopper-update       (nth 1 i) dt))
         (if (starts-with? (nth 0 i) [pullable-ensw]) (pullable-ensw-update (nth 1 i) dt))
         )
+
+    (define tmpPassCounters [prevent problems of modifying during iteration] nil)
+    (= tmpPassCounters pass-counters)
+    (for i in tmpPassCounters
+        (pass-counter-update (nth 1 i) dt))
 
     true))
 

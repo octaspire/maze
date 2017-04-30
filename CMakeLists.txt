@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
+project(octaspire-maze C)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 23)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 1)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 24)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
+
+message("== Building ${PROJECT_NAME} ${OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_MINOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_PATCH}")
 
 set(OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/test/resource/")
 
@@ -15,19 +18,38 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/.gitmodules")
-    message("== Updating git submodules...")
+    message("== Updating git submodules of ${PROJECT_NAME}...")
+    message("-----------------------------------------------")
     execute_process(
         COMMAND git submodule update --init --recursive --remote
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
+    message("== Submodules of ${PROJECT_NAME} updated")
+    message("-----------------------------------------------")
 endif()
 
+message("== Build type of ${PROJECT_NAME} is ${CMAKE_BUILD_TYPE}")
 
-project(octaspire-maze C)
-message("== Build type is ${CMAKE_BUILD_TYPE}")
-add_subdirectory(external/octaspire_dern)
-add_subdirectory(external/octaspire_easing)
-add_subdirectory(external/octaspire_sdl2_utils)
+if(NOT TARGET octaspire-dern)
+    message("== Project ${PROJECT_NAME} adding subdirectory:")
+    message("-----------------------------------------------")
+    add_subdirectory(external/octaspire_dern)
+    message("-----------------------------------------------")
+endif(NOT TARGET octaspire-dern)
+
+if(NOT TARGET octaspire-easing)
+    message("== Project ${PROJECT_NAME} adding subdirectory:")
+    message("-----------------------------------------------")
+    add_subdirectory(external/octaspire_easing)
+    message("-----------------------------------------------")
+endif(NOT TARGET octaspire-easing)
+
+if(NOT TARGET octaspire-sdl2-utils)
+    message("== Project ${PROJECT_NAME} adding subdirectory:")
+    message("-----------------------------------------------")
+    add_subdirectory(external/octaspire_sdl2_utils)
+    message("-----------------------------------------------")
+endif(NOT TARGET octaspire-sdl2-utils)
 
 file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 file(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/octaspire/maze/*.h")
@@ -50,12 +72,19 @@ set_property(TARGET octaspire-xxd PROPERTY C_STANDARD 99)
 set_property(TARGET octaspire-xxd PROPERTY C_EXTENSIONS OFF)
 target_link_libraries(octaspire-xxd octaspire-core m)
 
-option(OCTASPIRE_MAZE_COVERAGE "OCTASPIRE_MAZE_COVERAGE" OFF)
+option(OCTASPIRE_MAZE_COVERAGE  "OCTASPIRE_MAZE_COVERAGE"  OFF)
+option(OCTASPIRE_MAZE_UNIT_TEST "OCTASPIRE_MAZE_UNIT_TEST" ON)
 
 if(OCTASPIRE_MAZE_COVERAGE)
-    message("== Code coverage enabled")
+    message("== Code coverage enabled for ${PROJECT_NAME}")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
 endif(OCTASPIRE_MAZE_COVERAGE)
+
+if(OCTASPIRE_MAZE_UNIT_TEST)
+    message("== Unit testing enabled for ${PROJECT_NAME}")
+else()
+    message("== Unit testing disabled for ${PROJECT_NAME}")
+endif(OCTASPIRE_MAZE_UNIT_TEST)
 
 add_executable(octaspire-maze ${SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c" "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c")
 set_property(TARGET octaspire-maze PROPERTY C_STANDARD 99)
@@ -104,7 +133,10 @@ add_custom_target(
     vera-maze
     COMMAND vera++ --error ${SOURCES} ${HEADERS})
 
-enable_testing()
-include(CTest)
-add_subdirectory(test)
+if(NOT TARGET octaspire-maze-test-runner AND OCTASPIRE_MAZE_UNIT_TEST)
+    message("== Building of unit tests enabled for ${PROJECT_NAME}")
+    enable_testing()
+    include(CTest)
+    add_subdirectory(test)
+endif(NOT TARGET octaspire-maze-test-runner AND OCTASPIRE_MAZE_UNIT_TEST)
 

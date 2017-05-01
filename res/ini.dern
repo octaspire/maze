@@ -1180,42 +1180,83 @@
 
     (= level-current-number 8)))
 
+(define level-9 [level-9] '() (fn ()
+
+    ; Top row
+    (for i from -7 to -3 (entity-new-wall i -4))
+    (for i from -1 to  1 (entity-new-wall i -4))
+
+    ; 2. row
+    (entity-new-wall -7 -3)
+    (entity-new-wall  0 -3)
+
+    ; 3. row
+    (entity-new-wall         -7 -2  )
+    (entity-new-wall          0 -2  )
+    (entity-new-pass-counter  1 -2 2)
+
+    ; 4. row
+    (entity-new-exit         -8 -1  )
+    (entity-new-pass-counter -3 -1 4)
+    (entity-new-turnstile-ew  0 -1  )
+    (entity-new-pass-counter  4 -1 2)
+    (entity-new-slope-sw      6 -1  )
+
+    ; 5. row
+    (entity-new-wall         -6 0)
+    (entity-new-player       -5 0)
+    (entity-new-wall          0 0)
+    (entity-new-wall          8 0)
+
+    ; 6. row
+    (entity-new-wall         -6 1  )
+    (entity-new-turnstile-we  0 1  )
+    (entity-new-stop-counter  3 1 4)
+    (entity-new-slope-nw      6 1  )
+
+    ; 7. row
+    (entity-new-wall         -6 2  )
+    (entity-new-pass-counter -4 2 1)
+
+    ; 8. row
+    (entity-new-wall         -6 3  )
+    (entity-new-stop-counter -2 3 1)
+    (entity-new-wall          0 3  )
+    (entity-new-key           7 3  )
+
+    ; Last row
+    (entity-new-wall         -6 4 )
+    (entity-new-wall         -5 4 )
+    (entity-new-wall          0 4 )
+    (entity-new-stop-counter  1 4 1)
+    (entity-new-wall          7 4 )
+
+    (= level-current-number 9)))
+
+(define number-of-levels [number of levels] 9)
+
 
 (define level-restart [restart level] '() (fn ()
     (level-reset)
 
-    ; implement 'select' and use it here. these if's
-    ; without else will not work without the temp variable
     (define lnum [level number before change] level-current-number)
 
-    (if (== 1 lnum) (level-1))
-    (if (== 2 lnum) (level-2))
-    (if (== 3 lnum) (level-3))
-    (if (== 4 lnum) (level-4))
-    (if (== 5 lnum) (level-5))
-    (if (== 6 lnum) (level-6))
-    (if (== 7 lnum) (level-7))
-    (if (== 8 lnum) (level-8))
+    (define name-of-fn-to-call [name of the level builder function to call] 'level-)
+    (+= name-of-fn-to-call lnum)
+    (eval ((eval name-of-fn-to-call)))
 
     (shake)))
 
 (define level-next [next level] '() (fn ()
     (level-reset)
 
-    ; implement 'select' and use it here. these if's
-    ; without else will not work without the temp variable
+    (define lnum [level number] (+ level-current-number 1))
 
-    (define lnum [level number before change] level-current-number)
+    (if (> lnum number-of-levels) (= lnum 1))
 
-    (if (== 1 lnum) (level-2))
-    (if (== 2 lnum) (level-3))
-    (if (== 3 lnum) (level-4))
-    (if (== 4 lnum) (level-5))
-    (if (== 5 lnum) (level-6))
-    (if (== 6 lnum) (level-7))
-    (if (== 7 lnum) (level-8))
-    (if (== 8 lnum) (level-1))
-
+    (define name-of-fn-to-call [name of the level builder function to call] 'level-)
+    (+= name-of-fn-to-call lnum)
+    (eval ((eval name-of-fn-to-call)))
     ))
 
 (define current-state [current-state] [game])

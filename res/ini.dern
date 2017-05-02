@@ -366,9 +366,7 @@
 
     (define pid [pid] (get-player-current-pullable-id))
 
-    (if (starts-with? name [pullable])     (do
-                                               (ensure-pullable-in-updatables  name slot)
-                                               (= slot 'player-was-on-side side)))
+    (if (starts-with? name [pullable])     )
 
     (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))
     (if (starts-with? name [bomb])         (bomb-on-collision name tx ty))
@@ -383,6 +381,16 @@
     (if (starts-with? name [slope-nw])     (slope-nw-on-collision name tx ty dir))
     (if (starts-with? name [slope-sw])     (slope-sw-on-collision name tx ty dir))
     ))
+
+(define pullable-on-collision [...] '(name [name] slot [slot] side [side]) (fn (name slot side)
+
+    (if (== name [pullable-ensw]) nil) ; NOP
+    (if (== name [pullable-e]) (if (not (== side [e])) (return nil)))
+
+    (do
+        (ensure-pullable-in-updatables  name slot)
+        (= slot 'player-was-on-side side))
+))
 
 (define ensure-pullable-in-updatables [...] '(name [name] slot [slot]) (fn (name slot)
     (for i in level-updatable-indices (if (== (nth 0 i) name) (return nil)))
@@ -578,6 +586,16 @@
      (animation-entity-new  id [pullable-ensw-idle] '((* 16 x) (* 16 y) 0))
      (level-set-slot x y (make-empty-slot))
      (define slot [slot at x y, the pullable-ensw to be] (level-get-slot x y))
+     (= slot 'name id)
+     (= slot 'x    x)
+     (= slot 'y    y)
+     ))
+
+(define entity-new-pullable-e [Add entity that can be pulled to right] '(x [x-coordinate] y [y-coordinate]) (fn (x y)
+     (define id [id] (string-format [pullable-e-{}-{}] x y))
+     (animation-entity-new  id [pullable-e-idle] '((* 16 x) (* 16 y) 0))
+     (level-set-slot x y (make-empty-slot))
+     (define slot [slot at x y, the pullable-e to be] (level-get-slot x y))
      (= slot 'name id)
      (= slot 'x    x)
      (= slot 'y    y)
@@ -1302,7 +1320,7 @@
 
     (set-player-dir nil)))
 
-(define pullable-ensw-update [update a pullable ensw] '(slot [slot for the entity] dt [delta time]) (fn (slot dt)
+(define pullable-anytype-update [update a any pullable type] '(slot [slot for the entity] dt [delta time]) (fn (slot dt)
 
     (define px  [px] (find slot 'x))
     (define py  [py] (find slot 'y))
@@ -1354,9 +1372,9 @@
     (define tmpLUI [prevent problems of modifying during iteration] nil)
     (= tmpLUI level-updatable-indices)
     (for i in tmpLUI
-        (if (starts-with? (nth 0 i) [bomb])          (bomb-update          (nth 1 i) dt))
-        (if (starts-with? (nth 0 i) [stopper])       (stopper-update       (nth 1 i) dt))
-        (if (starts-with? (nth 0 i) [pullable-ensw]) (pullable-ensw-update (nth 1 i) dt))
+        (if (starts-with? (nth 0 i) [bomb])          (bomb-update             (nth 1 i) dt))
+        (if (starts-with? (nth 0 i) [stopper])       (stopper-update          (nth 1 i) dt))
+        (if (starts-with? (nth 0 i) [pullable-])     (pullable-anytype-update (nth 1 i) dt))
         )
 
     (define tmpPassCounters [prevent problems of modifying during iteration] nil)

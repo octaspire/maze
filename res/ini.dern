@@ -385,7 +385,7 @@
 (define pullable-on-collision [...] '(name [name] slot [slot] side [side]) (fn (name slot side)
 
     (if (== name [pullable-ensw]) nil) ; NOP
-    (if (== name [pullable-e]) (if (not (== side [e])) (return nil)))
+    (if (== name [pullable-e]) (if (not (== side [e])) (return)))
 
     (do
         (ensure-pullable-in-updatables  name slot)

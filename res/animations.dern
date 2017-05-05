@@ -24,6 +24,12 @@
 (animation-entity-define [turnstile-ew-idle]   20)
 (animation-entity-define [turnstile-sn-idle]   21)
 (animation-entity-define [turnstile-ns-idle]   22)
+
+(animation-entity-define [stop-turnstile-we-idle]   23)
+(animation-entity-define [stop-turnstile-ew-idle]   24)
+(animation-entity-define [stop-turnstile-sn-idle]   25)
+(animation-entity-define [stop-turnstile-ns-idle]   26)
+
 (animation-entity-define [slope-en-idle]       27)
 (animation-entity-define [slope-es-idle]       28)
 (animation-entity-define [slope-nw-idle]       29)

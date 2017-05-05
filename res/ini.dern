@@ -366,8 +366,7 @@
 
     (define pid [pid] (get-player-current-pullable-id))
 
-    (if (starts-with? name [pullable])     )
-
+    (if (starts-with? name [pullable])     (pullable-on-collision name slot side))
     (if (starts-with? name [stop-counter]) (stop-counter-on-collision name tx ty))
     (if (starts-with? name [bomb])         (bomb-on-collision name tx ty))
     (if (starts-with? name [toggle])       (toggle-on-collision name tx ty dir))

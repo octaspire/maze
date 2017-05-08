@@ -377,9 +377,14 @@
 
 (define pass-or-fail-level [Move to next level or restart current] '() (fn ()
     (if (< (find (get-player) 'number-of-keys) level-number-of-keys) (do (level-restart) (return nil)))
-    (for slot in level (if (starts-with? (find slot 'name) [toggle]) (if (toggle-open? slot) (do (level-restart) (return nil)))))
+
+    (for slot in level
+         (if (starts-with? (find slot 'name) [toggle]) (if (toggle-open? slot) (do (level-restart) (return nil)))))
+
     ; Level is passed
-    (do (= current-state [tweenOut]) (tween-level-out))))
+    (animation-entity-remove (find (level-get-slot player-x player-y) 'name))
+    (= current-state [tweenOut])
+    (tween-level-out)))
 
 (define on-collision [on-collision] '(tx [tx] ty [ty] dir [player's direction]) (fn (tx ty dir)
     (define slot [slot at tx ty, the thing collided with] (level-get-slot tx ty))

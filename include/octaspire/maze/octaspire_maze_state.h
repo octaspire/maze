@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 #include <octaspire/sdl2-utils/octaspire_sdl2_texture.h>
 #include <octaspire/core/octaspire_memory.h>
 #include <octaspire/core/octaspire_stdio.h>

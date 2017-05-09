@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(octaspire-maze C)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 35)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 36)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 message("== Building ${PROJECT_NAME} ${OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_MINOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_PATCH}")
@@ -65,7 +65,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_easing/build
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_sdl2_utils/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/octaspire_sdl2_utils/build/include")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
-
+include_directories(${SDL2_INCLUDE_DIR})
 
 add_executable(octaspire-xxd "${CMAKE_CURRENT_SOURCE_DIR}/etc/octaspire_xxd.c")
 set_property(TARGET octaspire-xxd PROPERTY C_STANDARD 99)

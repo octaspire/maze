@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 #include <octaspire/dern/octaspire_dern_vm.h>
 #include <octaspire/dern/octaspire_dern_config.h>
 #include <octaspire/core/octaspire_memory.h>

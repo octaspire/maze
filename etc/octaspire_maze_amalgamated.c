@@ -69321,7 +69321,6 @@ size_t const octaspire_maze_texture_entities_len=196746;
 
 #define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.42.0"
 
-#define OCTASPIRE_MAZE_CONFIG_TEST_RES_PATH "/home/pi/gitlab/maze/test/resource/"
 
 #define OCTASPIRE_MAZE_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 104858000
 

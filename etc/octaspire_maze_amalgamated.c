@@ -205,10 +205,10 @@ limitations under the License.
 #define OCTASPIRE_CORE_CONFIG_H
 
 #define OCTASPIRE_CORE_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_CORE_CONFIG_VERSION_MINOR "30"
+#define OCTASPIRE_CORE_CONFIG_VERSION_MINOR "33"
 #define OCTASPIRE_CORE_CONFIG_VERSION_PATCH "0"
 
-#define OCTASPIRE_CORE_CONFIG_VERSION_STR   "Octaspire Core version 0.30.0"
+#define OCTASPIRE_CORE_CONFIG_VERSION_STR   "Octaspire Core version 0.33.0"
 
 
 
@@ -6312,33 +6312,31 @@ size_t octaspire_container_hash_map_get_number_of_elements(octaspire_container_h
 }
 
 octaspire_container_hash_map_element_t *octaspire_container_hash_map_get_at_index(
-    octaspire_container_hash_map_t *self, size_t const index)
+    octaspire_container_hash_map_t * const self,
+    size_t const index)
 {
-    assert(index < self->numElements);
-
     size_t counter = 0;
     for (size_t i = 0; i < octaspire_container_vector_get_length(self->buckets); ++i)
     {
-        octaspire_container_vector_t *bucket = (octaspire_container_vector_t*)
+        octaspire_container_vector_t * const bucket = (octaspire_container_vector_t*)
             octaspire_container_vector_get_element_at(
                 self->buckets,
                 i);
 
         size_t const bucketSize = octaspire_container_vector_get_length(bucket);
 
-        for (size_t j = 0; j < bucketSize; ++j)
+        if (bucketSize)
         {
-            if (counter == index)
+            if (index <= (counter + bucketSize - 1))
             {
                 return (octaspire_container_hash_map_element_t*)
-                    octaspire_container_vector_get_element_at(bucket, j);
+                    octaspire_container_vector_get_element_at(bucket, index - counter);
             }
 
-            ++counter;
+            counter += bucketSize;
         }
      }
 
-    assert(false);
     return 0;
 }
 
@@ -16588,10 +16586,10 @@ limitations under the License.
 #define OCTASPIRE_DERN_CONFIG_H
 
 #define OCTASPIRE_DERN_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_DERN_CONFIG_VERSION_MINOR "72"
+#define OCTASPIRE_DERN_CONFIG_VERSION_MINOR "78"
 #define OCTASPIRE_DERN_CONFIG_VERSION_PATCH "0"
 
-#define OCTASPIRE_DERN_CONFIG_VERSION_STR   "Octaspire Dern version 0.72.0"
+#define OCTASPIRE_DERN_CONFIG_VERSION_STR   "Octaspire Dern version 0.78.0"
 
 
 //#define OCTASPIRE_DERN_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 10485800
@@ -48457,10 +48455,10 @@ are permitted provided that the following conditions are met:
 #define OCTASPIRE_EASING_CONFIG_H
 
 #define OCTASPIRE_EASING_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_EASING_CONFIG_VERSION_MINOR "3"
+#define OCTASPIRE_EASING_CONFIG_VERSION_MINOR "5"
 #define OCTASPIRE_EASING_CONFIG_VERSION_PATCH "1"
 
-#define OCTASPIRE_EASING_CONFIG_VERSION_STR   "Octaspire Easing version 0.3.1"
+#define OCTASPIRE_EASING_CONFIG_VERSION_STR   "Octaspire Easing version 0.5.1"
 
 
 #endif
@@ -69316,10 +69314,10 @@ size_t const octaspire_maze_texture_entities_len=196746;
 #define OCTASPIRE_MAZE_CONFIG_H
 
 #define OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "42"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "47"
 #define OCTASPIRE_MAZE_CONFIG_VERSION_PATCH "0"
 
-#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.42.0"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.47.0"
 
 
 #define OCTASPIRE_MAZE_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 104858000

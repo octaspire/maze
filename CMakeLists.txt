@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(octaspire-maze C)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 44)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 45)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 message("== Building ${PROJECT_NAME} ${OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_MINOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_PATCH}")
@@ -132,6 +132,10 @@ add_custom_target(
 add_custom_target(
     vera-maze
     COMMAND vera++ --error ${SOURCES} ${HEADERS})
+
+add_custom_target(
+    new-release-maze
+    COMMAND "${CMAKE_SOURCE_DIR}/etc/new-release.sh" "${CMAKE_SOURCE_DIR}")
 
 if(NOT TARGET octaspire-maze-test-runner AND OCTASPIRE_MAZE_UNIT_TEST)
     message("== Building of unit tests enabled for ${PROJECT_NAME}")

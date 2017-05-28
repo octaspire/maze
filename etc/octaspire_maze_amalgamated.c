@@ -23,6 +23,26 @@ limitations under the License.
   Edit the separate .h and .c files in the source distribution and then
   let the script create this file agian with the modifications.
 
+*******************************************************************************
+
+    To compile this file:
+
+    Linux:
+    gcc -O3 -std=c99 -Wall -Wextra octaspire_maze_amalgamated.c \
+        `pkg-config --cflags --libs sdl2` -lm -o octaspire-maze
+
+    FreeBSD:
+    todo
+
+    NetBSD:
+    todo
+
+    Haiku:
+    todo
+
+    MINIX 3:
+    todo
+
 ******************************************************************************/
 #ifndef OCTASPIRE_MAZE_AMALGAMATED_H
 #define OCTASPIRE_MAZE_AMALGAMATED_H
@@ -51634,7 +51654,7 @@ unsigned int octaspire_maze_banner_white_len = 687;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 
-char const octaspire_maze_animations[] =
+unsigned char const octaspire_maze_animations[] =
 {
  0x28,
  0x61, 0x6e, 0x69, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2d, 0x65, 0x6e, 0x74, 0x69, 0x74,
@@ -51854,7 +51874,7 @@ size_t const octaspire_maze_animations_len=3053;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 
-char const octaspire_maze_ini[] =
+unsigned char const octaspire_maze_ini[] =
 {
  0x28,
  0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x20, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x20, 0x5b, 0x6c,
@@ -56179,7 +56199,7 @@ size_t const octaspire_maze_ini_len=64621;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 
-char const octaspire_maze_texture_entities[] =
+unsigned char const octaspire_maze_texture_entities[] =
 {
  0x42,
  0x4d, 0x8a, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x8a, 0x00, 0x00, 0x00, 0x7c, 0x00,
@@ -69314,10 +69334,10 @@ size_t const octaspire_maze_texture_entities_len=196746;
 #define OCTASPIRE_MAZE_CONFIG_H
 
 #define OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "49"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "50"
 #define OCTASPIRE_MAZE_CONFIG_VERSION_PATCH "0"
 
-#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.49.0"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.50.0"
 
 
 #define OCTASPIRE_MAZE_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 104858000
@@ -71879,7 +71899,7 @@ int main(int argc, char *argv[])
     octaspire_dern_value_t *resultVal =
         octaspire_dern_vm_read_from_buffer_and_eval_in_global_environment(
             vm,
-            octaspire_maze_animations,
+            (char const * const)octaspire_maze_animations,
             octaspire_maze_animations_len);
 
     if (resultVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
@@ -71893,7 +71913,12 @@ int main(int argc, char *argv[])
 
     octaspire_maze_game_push_back_state(
         game,
-        octaspire_maze_state_new(game, octaspire_maze_ini, octaspire_maze_ini_len, allocator, stdio));
+        octaspire_maze_state_new(
+            game,
+            (char const * const)octaspire_maze_ini,
+            octaspire_maze_ini_len,
+            allocator,
+            stdio));
 
     Uint64 timeNow   = SDL_GetPerformanceCounter();
     Uint64 timeLast  = 0;

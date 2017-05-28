@@ -6,7 +6,7 @@ FILE="$1/octaspire_maze_amalgamated.c"
 rm -rf $FILE
 
 # Write license and the top-part of the include guards
-cat >> $FILE << EnDoFmEsSaGe
+cat >> $FILE << 'EnDoFmEsSaGe'
 /******************************************************************************
 Octaspire Maze - Puzzle game
 Copyright 2017 www.octaspire.com

@@ -32,6 +32,26 @@ limitations under the License.
   Edit the separate .h and .c files in the source distribution and then
   let the script create this file agian with the modifications.
 
+*******************************************************************************
+
+    To compile this file:
+
+    Linux:
+    gcc -O3 -std=c99 -Wall -Wextra octaspire_maze_amalgamated.c \
+        `pkg-config --cflags --libs sdl2` -lm -o octaspire-maze
+
+    FreeBSD:
+    todo
+
+    NetBSD:
+    todo
+
+    Haiku:
+    todo
+
+    MINIX 3:
+    todo
+
 ******************************************************************************/
 #ifndef OCTASPIRE_MAZE_AMALGAMATED_H
 #define OCTASPIRE_MAZE_AMALGAMATED_H

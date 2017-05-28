@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(octaspire-maze C)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 48)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 49)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 message("== Building ${PROJECT_NAME} ${OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_MINOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_PATCH}")
@@ -107,19 +107,19 @@ install(FILES ${MANUAL6} DESTINATION "man/man6")
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_animations.c"
-    COMMAND octaspire-xxd octaspire_maze_animations "${CMAKE_CURRENT_SOURCE_DIR}/res/animations.dern"
+    COMMAND octaspire-xxd octaspire_maze_animations "${CMAKE_CURRENT_SOURCE_DIR}/res/animations.dern" --output-char-buffer
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/res/animations.dern" octaspire-xxd
     COMMENT "Building header for resource: animation")
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_ini.c"
-    COMMAND octaspire-xxd octaspire_maze_ini "${CMAKE_CURRENT_SOURCE_DIR}/res/ini.dern"
+    COMMAND octaspire-xxd octaspire_maze_ini "${CMAKE_CURRENT_SOURCE_DIR}/res/ini.dern" --output-char-buffer
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/res/ini.dern" octaspire-xxd
     COMMENT "Building header for resource: ini")
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/octaspire/maze/octaspire_maze_texture_entities.c"
-    COMMAND octaspire-xxd octaspire_maze_texture_entities "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.bmp"
+    COMMAND octaspire-xxd octaspire_maze_texture_entities "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.bmp" --output-char-buffer
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/res/entities.bmp" octaspire-xxd
     COMMENT "Building header for resource: entities")
 

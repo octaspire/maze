@@ -51634,7 +51634,7 @@ unsigned int octaspire_maze_banner_white_len = 687;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 
-unsigned char const octaspire_maze_animations[] =
+char const octaspire_maze_animations[] =
 {
  0x28,
  0x61, 0x6e, 0x69, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2d, 0x65, 0x6e, 0x74, 0x69, 0x74,
@@ -51854,7 +51854,7 @@ size_t const octaspire_maze_animations_len=3053;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 
-unsigned char const octaspire_maze_ini[] =
+char const octaspire_maze_ini[] =
 {
  0x28,
  0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x20, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x20, 0x5b, 0x6c,
@@ -56179,7 +56179,7 @@ size_t const octaspire_maze_ini_len=64621;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 
-unsigned char const octaspire_maze_texture_entities[] =
+char const octaspire_maze_texture_entities[] =
 {
  0x42,
  0x4d, 0x8a, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x8a, 0x00, 0x00, 0x00, 0x7c, 0x00,
@@ -69314,10 +69314,10 @@ size_t const octaspire_maze_texture_entities_len=196746;
 #define OCTASPIRE_MAZE_CONFIG_H
 
 #define OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "48"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "49"
 #define OCTASPIRE_MAZE_CONFIG_VERSION_PATCH "0"
 
-#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.48.0"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.49.0"
 
 
 #define OCTASPIRE_MAZE_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 104858000

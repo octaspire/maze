@@ -226,9 +226,9 @@ limitations under the License.
 
 #define OCTASPIRE_CORE_CONFIG_VERSION_MAJOR "0"
 #define OCTASPIRE_CORE_CONFIG_VERSION_MINOR "34"
-#define OCTASPIRE_CORE_CONFIG_VERSION_PATCH "1"
+#define OCTASPIRE_CORE_CONFIG_VERSION_PATCH "2"
 
-#define OCTASPIRE_CORE_CONFIG_VERSION_STR   "Octaspire Core version 0.34.1"
+#define OCTASPIRE_CORE_CONFIG_VERSION_STR   "Octaspire Core version 0.34.2"
 
 
 
@@ -6386,22 +6386,37 @@ octaspire_container_hash_map_element_iterator_init(
     iterator.elementInsideBucketIndex = 0;
     iterator.element = 0;
 
-    if (iterator.bucketIndex < octaspire_container_vector_get_length(self->buckets))
+    while (!(iterator.element))
     {
-        octaspire_container_vector_t * const bucket = (octaspire_container_vector_t*)
-            octaspire_container_vector_get_element_at(
-                self->buckets,
-                iterator.bucketIndex);
-
-        size_t const bucketSize = octaspire_container_vector_get_length(bucket);
-
-        if (iterator.elementInsideBucketIndex < bucketSize)
+        if (iterator.bucketIndex < octaspire_container_vector_get_length(self->buckets))
         {
-            iterator.element = (octaspire_container_hash_map_element_t*)
+            octaspire_container_vector_t * const bucket = (octaspire_container_vector_t*)
+                octaspire_container_vector_get_element_at(
+                    self->buckets,
+                    iterator.bucketIndex);
+
+            size_t const bucketSize = octaspire_container_vector_get_length(bucket);
+
+            for (; iterator.elementInsideBucketIndex < bucketSize; ++(iterator.elementInsideBucketIndex))
+            {
+                iterator.element = (octaspire_container_hash_map_element_t*)
                     octaspire_container_vector_get_element_at(
                         bucket,
                         iterator.elementInsideBucketIndex);
+
+                if (iterator.element)
+                {
+                    break;
+                }
+            }
         }
+        else
+        {
+            break;
+        }
+
+        ++(iterator.bucketIndex);
+        iterator.elementInsideBucketIndex = 0;
     }
 
     return iterator;
@@ -6412,52 +6427,37 @@ bool octaspire_container_hash_map_element_iterator_next(
 {
     self->element = 0;
 
-    if (self->bucketIndex < octaspire_container_vector_get_length(self->hashMap->buckets))
+    while (!(self->element))
     {
-        octaspire_container_vector_t *bucket = (octaspire_container_vector_t*)
-            octaspire_container_vector_get_element_at(
-                self->hashMap->buckets,
-                self->bucketIndex);
-
-        size_t bucketSize = octaspire_container_vector_get_length(bucket);
-
-        ++(self->elementInsideBucketIndex);
-
-        if (self->elementInsideBucketIndex < bucketSize)
+        if (self->bucketIndex < octaspire_container_vector_get_length(self->hashMap->buckets))
         {
-            self->element = (octaspire_container_hash_map_element_t*)
+            octaspire_container_vector_t * const bucket = (octaspire_container_vector_t*)
+                octaspire_container_vector_get_element_at(
+                    self->hashMap->buckets,
+                    self->bucketIndex);
+
+            size_t const bucketSize = octaspire_container_vector_get_length(bucket);
+
+            for (; self->elementInsideBucketIndex < bucketSize; ++(self->elementInsideBucketIndex))
+            {
+                self->element = (octaspire_container_hash_map_element_t*)
                     octaspire_container_vector_get_element_at(
                         bucket,
                         self->elementInsideBucketIndex);
-        }
-        else
-        {
-            ++(self->bucketIndex);
 
-            if (self->bucketIndex < octaspire_container_vector_get_length(self->hashMap->buckets))
-            {
-                bucket = (octaspire_container_vector_t*)
-                    octaspire_container_vector_get_element_at(
-                        self->hashMap->buckets,
-                        self->bucketIndex);
-
-                bucketSize = octaspire_container_vector_get_length(bucket);
-
-                self->elementInsideBucketIndex = 0;
-
-                if (self->elementInsideBucketIndex < bucketSize)
+                if (self->element)
                 {
-                    self->element = (octaspire_container_hash_map_element_t*)
-                        octaspire_container_vector_get_element_at(
-                            bucket,
-                            self->elementInsideBucketIndex);
-                }
-                else
-                {
-                    self->element = 0;
+                    break;
                 }
             }
         }
+        else
+        {
+            break;
+        }
+
+        ++(self->bucketIndex);
+        self->elementInsideBucketIndex = 0;
     }
 
     return self->element != 0;
@@ -16470,8 +16470,6 @@ TEST octaspire_container_hash_map_element_iterator_test(void)
 
     ASSERT_EQ(hashMap, iterator.hashMap);
     ASSERT_EQ(0,       iterator.element);
-    ASSERT_EQ(0,       iterator.bucketIndex);
-    ASSERT_EQ(0,       iterator.elementInsideBucketIndex);
 
     for (size_t i = 0; i < 100; ++i)
     {
@@ -16778,9 +16776,9 @@ limitations under the License.
 
 #define OCTASPIRE_DERN_CONFIG_VERSION_MAJOR "0"
 #define OCTASPIRE_DERN_CONFIG_VERSION_MINOR "79"
-#define OCTASPIRE_DERN_CONFIG_VERSION_PATCH "0"
+#define OCTASPIRE_DERN_CONFIG_VERSION_PATCH "1"
 
-#define OCTASPIRE_DERN_CONFIG_VERSION_STR   "Octaspire Dern version 0.79.0"
+#define OCTASPIRE_DERN_CONFIG_VERSION_STR   "Octaspire Dern version 0.79.1"
 
 
 //#define OCTASPIRE_DERN_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 10485800
@@ -69508,9 +69506,9 @@ size_t const octaspire_maze_texture_entities_len=196746;
 
 #define OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR "0"
 #define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "51"
-#define OCTASPIRE_MAZE_CONFIG_VERSION_PATCH "0"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_PATCH "1"
 
-#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.51.0"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.51.1"
 
 
 #define OCTASPIRE_MAZE_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 104858000

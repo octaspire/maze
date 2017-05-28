@@ -50778,7 +50778,7 @@ octaspire_sdl2_texture_t *octaspire_sdl2_texture_new_from_path(
     octaspire_memory_allocator_t *allocator);
 
 octaspire_sdl2_texture_t *octaspire_sdl2_texture_new_from_buffer(
-    char const * const buffer,
+    void const * const buffer,
     size_t const bufferLengthInOctets,
     char const * const name,
     bool const blend,
@@ -69314,10 +69314,10 @@ size_t const octaspire_maze_texture_entities_len=196746;
 #define OCTASPIRE_MAZE_CONFIG_H
 
 #define OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR "0"
-#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "47"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_MINOR "48"
 #define OCTASPIRE_MAZE_CONFIG_VERSION_PATCH "0"
 
-#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.47.0"
+#define OCTASPIRE_MAZE_CONFIG_VERSION_STR   "Octaspire Maze version 0.48.0"
 
 
 #define OCTASPIRE_MAZE_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS 104858000
@@ -69576,7 +69576,7 @@ octaspire_sdl2_texture_t *octaspire_sdl2_texture_new_from_path(
 }
 
 octaspire_sdl2_texture_t *octaspire_sdl2_texture_new_from_buffer(
-    char const * const buffer,
+    void const * const buffer,
     size_t const bufferLengthInOctets,
     char const * const name,
     bool const blend,

@@ -933,6 +933,14 @@ void octaspire_maze_state_update(
     {
         tmpVal = octaspire_dern_vm_create_new_value_string_from_c_string(self->vm, "action 1");
     }
+    else if (input == OCTASPIRE_MAZE_INPUT_PREV_LEVEL)
+    {
+        tmpVal = octaspire_dern_vm_create_new_value_string_from_c_string(self->vm, "prevLevel");
+    }
+    else if (input == OCTASPIRE_MAZE_INPUT_NEXT_LEVEL)
+    {
+        tmpVal = octaspire_dern_vm_create_new_value_string_from_c_string(self->vm, "nextLevel");
+    }
 
     octaspire_dern_value_as_vector_push_back_element(updateCallVal, &tmpVal);
 

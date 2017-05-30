@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
 
     octaspire_dern_vm_set_user_data(vm, game);
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
     {
         octaspire_maze_print_message_c_str(
             "SDL2 init failed:",
@@ -357,6 +357,23 @@ int main(int argc, char *argv[])
             useColors);
 
         exit(EXIT_FAILURE);
+    }
+
+    SDL_Joystick *controller = 0;
+
+    int const OCTASPIRE_MAZE_JOYSTICK_AXIS_NOISE = 32766;
+
+    if (SDL_NumJoysticks() > 0)
+    {
+        controller = SDL_JoystickOpen(0);
+
+        if (!controller)
+        {
+            octaspire_maze_print_message_c_str(
+                "Cannot open controller",
+                OCTASPIRE_MAZE_MESSAGE_ERROR,
+                useColors);
+        }
     }
 
     if (!useSoftwareRenderer)
@@ -510,6 +527,42 @@ int main(int argc, char *argv[])
             {
                 running = false;
             }
+            else if (e.type == SDL_JOYAXISMOTION)
+            {
+                if (e.jaxis.axis == 0)
+                {
+                    if (e.jaxis.value < -OCTASPIRE_MAZE_JOYSTICK_AXIS_NOISE)
+                    {
+                        input = SDL_JoystickGetButton(controller, 7) ?
+                            OCTASPIRE_MAZE_INPUT_PREV_LEVEL :
+                            OCTASPIRE_MAZE_INPUT_LEFT;
+                    }
+                    else if (e.jaxis.value > OCTASPIRE_MAZE_JOYSTICK_AXIS_NOISE)
+                    {
+                        input = SDL_JoystickGetButton(controller, 7) ?
+                            OCTASPIRE_MAZE_INPUT_NEXT_LEVEL :
+                            OCTASPIRE_MAZE_INPUT_RIGHT;
+                    }
+                }
+                else
+                {
+                    if (e.jaxis.value < -OCTASPIRE_MAZE_JOYSTICK_AXIS_NOISE)
+                    {
+                        input = OCTASPIRE_MAZE_INPUT_UP;
+                    }
+                    else if (e.jaxis.value > OCTASPIRE_MAZE_JOYSTICK_AXIS_NOISE)
+                    {
+                        input = OCTASPIRE_MAZE_INPUT_DOWN;
+                    }
+                }
+            }
+            else if (e.type == SDL_JOYBUTTONDOWN)
+            {
+                if (e.jbutton.button == 9)
+                {
+                    input = OCTASPIRE_MAZE_INPUT_RESTART;
+                }
+            }
             else if (e.type == SDL_KEYDOWN)
             {
                 if (e.key.keysym.sym == SDLK_r)
@@ -534,11 +587,15 @@ int main(int argc, char *argv[])
                 }
                 else if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_h)
                 {
-                    input = OCTASPIRE_MAZE_INPUT_LEFT;
+                    input = (e.key.keysym.mod & KMOD_CTRL) ?
+                        OCTASPIRE_MAZE_INPUT_PREV_LEVEL :
+                        OCTASPIRE_MAZE_INPUT_LEFT;
                 }
                 else if (e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_l)
                 {
-                    input = OCTASPIRE_MAZE_INPUT_RIGHT;
+                    input = (e.key.keysym.mod & KMOD_CTRL) ?
+                        OCTASPIRE_MAZE_INPUT_NEXT_LEVEL :
+                        OCTASPIRE_MAZE_INPUT_RIGHT;
                 }
                 else if (e.key.keysym.sym == SDLK_f)
                 {
@@ -582,6 +639,9 @@ int main(int argc, char *argv[])
         octaspire_maze_game_render(game, renderer, texture, origoX, origoY);
         SDL_RenderPresent(renderer);
     }
+
+    SDL_JoystickClose(controller);
+    controller = 0;
 
     octaspire_sdl2_texture_release(texture);
     texture = 0;

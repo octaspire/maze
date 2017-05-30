@@ -1502,7 +1502,49 @@
     (= level-current-number 10)))
 
 
-(define number-of-levels [number of levels] 10)
+(define level-11 [level-11] '() (fn ()
+
+    ; Top to fifth rows
+    (for y from -8 to -4
+         (for x from -8 to 8 (entity-new-pullable-ensw x y)))
+
+    ; 6. row
+    (for x from -8 to -2 (entity-new-pullable-ensw x -3))
+    (for x from  2 to  8 (entity-new-pullable-ensw x -3))
+
+    ; 7. row
+    (for x from -8 to -3 (entity-new-pullable-ensw x -2))
+    (for x from  3 to  8 (entity-new-pullable-ensw x -2))
+
+    ; 8. row
+    (entity-new-exit -10 -1)
+    (for x from -8 to -4 (entity-new-pullable-ensw x -1))
+    (for x from  4 to  8 (entity-new-pullable-ensw x -1))
+
+    ; 9. row
+    (for x from -8 to -4 (entity-new-pullable-ensw x  0))
+    (entity-new-player 0  0)
+    (for x from  4 to  8 (entity-new-pullable-ensw x  0))
+
+    ; 10. row
+    (for x from -8 to -4 (entity-new-pullable-ensw x  1))
+    (for x from  4 to  8 (entity-new-pullable-ensw x  1))
+
+    ; 11. row
+    (for x from -8 to -3 (entity-new-pullable-ensw x  2))
+    (for x from  3 to  8 (entity-new-pullable-ensw x  2))
+
+    ; 12. row
+    (for x from -8 to -2 (entity-new-pullable-ensw x  3))
+    (for x from  2 to  8 (entity-new-pullable-ensw x  3))
+
+    ; Five bottom rows
+    (for y from 4 to 8
+         (for x from -8 to 8 (entity-new-pullable-ensw x y)))
+))
+
+
+(define number-of-levels [number of levels] 11)
 
 (define level-restart [restart level] '() (fn ()
     (level-reset)
@@ -1514,6 +1556,17 @@
     (eval ((eval name-of-fn-to-call)))
 
     (shake)))
+
+(define level-prev [previous level] '() (fn ()
+    (level-reset)
+
+    (define lnum [level number] (- level-current-number 1))
+
+    (if (< lnum 1) (= lnum number-of-levels))
+
+    (define name-of-fn-to-call [name of the level builder function to call] 'level-)
+    (+= name-of-fn-to-call lnum)
+    (eval ((eval name-of-fn-to-call)))))
 
 (define level-next [next level] '() (fn ()
     (level-reset)
@@ -1592,8 +1645,10 @@
                        input [string telling the input, if any: u, d, l, r]) (fn (dt input)
 
     (select
-        (== input [restart])  (do (= input []) (level-restart))
-        (== input [action 1]) (do (= input []) (= printlevel (not printlevel))))
+        (== input [restart])   (do (= input []) (level-restart))
+        (== input [prevLevel]) (do (= input []) (level-prev))
+        (== input [nextLevel]) (do (= input []) (level-next))
+        (== input [action 1])  (do (= input []) (= printlevel (not printlevel))))
 
     (if (!= input []) (+= pending-input input))
 

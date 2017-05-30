@@ -865,8 +865,9 @@
      (= slot 'x    x)
      (= slot 'y    y)))
 
-(define level-1 [level-1] '() (fn ()
+(define levels [levels] '(
 
+    (fn ()
     ; Top row
     (entity-new-wall          0 -5)
     (entity-new-stop-counter  2 -5 1)
@@ -917,10 +918,11 @@
     ; Last row
     (entity-new-exit         -4  5)
     (entity-new-stop-counter -2  5 1)
-    (entity-new-wall          0  5)
-    (= level-current-number 1)))
+    (entity-new-wall          0  5))
 
-(define level-2 [level-2] '() (fn ()
+
+
+    (fn ()
     ; Top row
     (entity-new-slope-es   0 -4)
     (entity-new-slope-sw   5 -4)
@@ -956,13 +958,11 @@
     (entity-new-slope-nw      5 4)
 
     ; 10. row
-    (entity-new-wall         -1 5)
+    (entity-new-wall         -1 5))
 
-    (= level-current-number 2)
-))
 
-(define level-3 [level-3] '() (fn ()
 
+    (fn ()
     ; Top row
     (entity-new-wall      -7  -7)
 
@@ -1032,12 +1032,11 @@
 
     ; Bottom row
     (entity-new-player        -8   7)
-    (entity-new-wall          -1   7)
+    (entity-new-wall          -1   7))
 
-    (= level-current-number 3)))
 
-(define level-4 [level-4] '() (fn ()
 
+    (fn ()
     ; top row
     (for i from -8 to 0 (entity-new-wall i -6))
 
@@ -1125,12 +1124,11 @@
     (entity-new-wall  7 4)
 
     ; Bottom row
-    (for i from -7 to 7 (entity-new-wall i 5))
+    (for i from -7 to 7 (entity-new-wall i 5)))
 
-    (= level-current-number 4)))
 
-(define level-5 [level-5] '() (fn ()
 
+    (fn ()
     ; Top row
     (entity-new-exit          0  -9)
 
@@ -1174,12 +1172,11 @@
 
     (for i from -7 to  7 (entity-new-pullable-ensw i   7))
 
-    (entity-new-exit 0 9)
+    (entity-new-exit 0 9))
 
-    (= level-current-number 5)))
 
-(define level-6 [level-6] '() (fn ()
 
+    (fn ()
     ; Top row
     (for i from -6 to 6 (entity-new-stopper i  -6))
 
@@ -1260,12 +1257,11 @@
     (for i from -6 to 6 (entity-new-stopper i  6))
 
     ; Bottom row
-    (entity-new-player      0   8)
+    (entity-new-player      0   8))
 
-    (= level-current-number 6)))
 
-(define level-7 [level-7] '() (fn ()
 
+    (fn ()
     ; Top row
     (for i from -6 to 6 (entity-new-wall i -6))
 
@@ -1320,12 +1316,11 @@
     ; Bottom row
     (for i from -6 to -1 (entity-new-wall i 6))
     (entity-new-exit 0 6)
-    (for i from  1 to  6 (entity-new-wall i 6))
+    (for i from  1 to  6 (entity-new-wall i 6)))
 
-    (= level-current-number 7)))
 
-(define level-8 [level-8] '() (fn ()
 
+    (fn ()
     ; Top row
     (entity-new-wall 1 -8)
 
@@ -1398,12 +1393,11 @@
 
     ; 17. row
     (entity-new-wall         0 8)
-    (entity-new-player       7 8)
+    (entity-new-player       7 8))
 
-    (= level-current-number 8)))
 
-(define level-9 [level-9] '() (fn ()
 
+    (fn ()
     ; Top row
     (for i from -7 to -3 (entity-new-wall i -4))
     (for i from -1 to  1 (entity-new-wall i -4))
@@ -1451,12 +1445,11 @@
     (entity-new-wall         -5 4 )
     (entity-new-wall          0 4 )
     (entity-new-stop-counter  1 4 1)
-    (entity-new-wall          7 4 )
+    (entity-new-wall          7 4 ))
 
-    (= level-current-number 9)))
 
-(define level-10 [level-10] '() (fn ()
 
+    (fn ()
     ; Top row
     (entity-new-wall     -7  -6)
     (entity-new-wall     -6  -6)
@@ -1518,13 +1511,11 @@
     (entity-new-exit    -5 5)
     (entity-new-player   0 5)
     (entity-new-slope-nw 6 5)
-    (entity-new-wall     7 5)
-
-    (= level-current-number 10)))
+    (entity-new-wall     7 5))
 
 
-(define level-11 [level-11] '() (fn ()
 
+    (fn ()
     ; Top to fifth rows
     (for y from -8 to -4
          (for x from -8 to 8 (entity-new-pullable-ensw x y)))
@@ -1561,21 +1552,24 @@
 
     ; Five bottom rows
     (for y from 4 to 8
-         (for x from -8 to 8 (entity-new-pullable-ensw x y)))
+         (for x from -8 to 8 (entity-new-pullable-ensw x y))))
+))
 
-    (= level-current-number 11)))
 
+(define number-of-levels [number of levels] '() (fn () (len levels)))
 
-(define number-of-levels [number of levels] 11)
+(define level-load [load level from vector index] '(levelNumber [1..n]) (fn (levelNumber)
+    (define f [f] (nth (- levelNumber 1) levels))
+    ((eval f))
+    (= level-current-number levelNumber)
+))
 
 (define level-restart [restart level] '() (fn ()
     (level-reset)
 
     (define lnum [level number before change] level-current-number)
 
-    (define name-of-fn-to-call [name of the level builder function to call] 'level-)
-    (+= name-of-fn-to-call lnum)
-    (eval ((eval name-of-fn-to-call)))
+    (level-load lnum)
 
     (shake)))
 
@@ -1584,22 +1578,18 @@
 
     (define lnum [level number] (- level-current-number 1))
 
-    (if (< lnum 1) (= lnum number-of-levels))
+    (if (< lnum 1) (= lnum (number-of-levels)))
 
-    (define name-of-fn-to-call [name of the level builder function to call] 'level-)
-    (+= name-of-fn-to-call lnum)
-    (eval ((eval name-of-fn-to-call)))))
+    (level-load lnum)))
 
 (define level-next [next level] '() (fn ()
     (level-reset)
 
     (define lnum [level number] (+ level-current-number 1))
 
-    (if (> lnum number-of-levels) (= lnum 1))
+    (if (> lnum (number-of-levels)) (= lnum 1))
 
-    (define name-of-fn-to-call [name of the level builder function to call] 'level-)
-    (+= name-of-fn-to-call lnum)
-    (eval ((eval name-of-fn-to-call)))))
+    (level-load lnum)))
 
 (define current-state [current-state] [game])
 (define pending-input [pending input that is not yet handled] '())
@@ -1739,7 +1729,7 @@
     (= current-state [game])))
 
 ; Game starts here
-(level-1)
+(level-load 1)
 
 
 

@@ -382,6 +382,7 @@
 
 (define exit-change-to-animation [Make exit to show the named animation] '(x [x of exit] y [y of exit] name [name of animation to show])
   (fn (x y name)
+    (if (or (nil? x) (nil? y)) return)
     (animation-entity-remove (find (level-get-slot x y) 'name))
     (define id [id] (string-format [exit-{}-{}] x y))
     (animation-entity-new id name '((* 16 x) (* 16 y) 0))))
@@ -888,6 +889,25 @@
      (= slot 'y    y)))
 
 (define levels [levels] '(
+
+    (fn ()
+    ; Top row
+    (entity-new-player -6 0)
+    (entity-new-exit    6 0))
+
+    (fn ()
+    ; Top row
+    (entity-new-player -6 0)
+    (entity-new-key     0 0)
+    (entity-new-exit    6 0))
+
+    (fn ()
+    ; Top row
+    (entity-new-wall    -6 0)
+    (entity-new-key     -5 0)
+    (entity-new-player  -2 0)
+    (entity-new-key      0 0)
+    (entity-new-exit     6 0))
 
     (fn ()
     ; Top row

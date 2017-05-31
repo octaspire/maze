@@ -462,11 +462,13 @@ int main(int argc, char *argv[])
 
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-    octaspire_sdl2_texture_t *texture = octaspire_sdl2_texture_new_from_buffer(
+    octaspire_sdl2_texture_t *texture = octaspire_sdl2_texture_new_color_keyed_from_buffer(
         octaspire_maze_texture_entities,
         octaspire_maze_texture_entities_len,
         "test-texture",
-        true,
+        255,
+        0,
+        180,
         renderer,
         allocator);
 

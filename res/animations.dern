@@ -1,5 +1,7 @@
 (animation-entity-define [player-idle]          0)
 (animation-entity-define [exit-idle]            1)
+(animation-entity-define [exit-pass]            98)
+(animation-entity-define [exit-fail]            99)
 (animation-entity-define [stopper-idle]         2)
 
 (animation-entity-define [pullable-ensw-idle]   3)

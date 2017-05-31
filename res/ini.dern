@@ -8,6 +8,9 @@
 (define player-y   [current player y]   nil)
 (define level-updatable-indices [entities in current level that must be updated] (hash-map))
 (define pass-or-fail-level-pending [.] false)
+(define active-exit-x [x-coordinate of activated exit] nil)
+(define active-exit-y [y-coordinate of activated exit] nil)
+(define level-restart-pending [Negative: not pending] -1)
 
 (define get-player [.] '() (fn ()
     (level-get-slot player-x player-y)))
@@ -44,6 +47,8 @@
     (= player-x nil)
     (= player-y nil)
     (= pass-or-fail-level-pending false)
+    (= active-exit-x nil)
+    (= active-exit-y nil)
     ; TODO why this doesn't work?
     ;(for i from 0 to (* level-width level-width) (= (nth level i) 'name []))
     (for i in level (= i 'name []))
@@ -375,14 +380,31 @@
         (if (and (== fx1 player-x) (== fy1 player-y)) (do (move-player-to tx1 ty1) (= (get-player) 'dir [l]) (return nil)))
         (if (and (== fx2 player-x) (== fy2 player-y)) (do (move-player-to tx2 ty2) (= (get-player) 'dir [d]) (return nil)))))
 
+(define exit-change-to-animation [Make exit to show the named animation] '(x [x of exit] y [y of exit] name [name of animation to show])
+  (fn (x y name)
+    (animation-entity-remove (find (level-get-slot x y) 'name))
+    (define id [id] (string-format [exit-{}-{}] x y))
+    (animation-entity-new id name '((* 16 x) (* 16 y) 0))))
+
 (define pass-or-fail-level [Move to next level or restart current] '() (fn ()
-    (if (< (find (get-player) 'number-of-keys) level-number-of-keys) (do (level-restart) (return nil)))
+    (animation-entity-remove (find (level-get-slot player-x player-y) 'name))
+
+    (if (< (find (get-player) 'number-of-keys) level-number-of-keys)
+      (do
+        (exit-change-to-animation active-exit-x active-exit-y [exit-fail])
+        (= level-restart-pending 10)
+        (return nil)))
 
     (for slot in level
-         (if (starts-with? (find slot 'name) [toggle]) (if (toggle-open? slot) (do (level-restart) (return nil)))))
+         (if (starts-with? (find slot 'name) [toggle])
+           (if (toggle-open? slot)
+             (do
+               (exit-change-to-animation active-exit-x active-exit-y [exit-fail])
+               (= level-restart-pending 10)
+               (return nil)))))
 
     ; Level is passed
-    (animation-entity-remove (find (level-get-slot player-x player-y) 'name))
+    (exit-change-to-animation active-exit-x active-exit-y [exit-pass])
     (= current-state [tweenOut])
     (tween-level-out)))
 
@@ -393,7 +415,7 @@
     (define side [on which side is player of the target] (dir-to-side dir))
 
     (select
-        (starts-with? name [exit])              (do (= pass-or-fail-level-pending true))
+        (starts-with? name [exit])              (do (= active-exit-x tx) (= active-exit-y ty) (= pass-or-fail-level-pending true))
         (starts-with? name [pullable])          (pullable-on-collision name slot side)
         (starts-with? name [stop-counter])      (stop-counter-on-collision name tx ty)
         (starts-with? name [bomb])              (bomb-on-collision name tx ty)
@@ -1711,6 +1733,16 @@
 (define state-update [state-update]
                      '(dt [delta time]
                        input [string telling the input, if any: u, d, l, r]) (fn (dt input)
+
+    (if (> level-restart-pending 0)
+      (do
+        (-- level-restart-pending)
+        (if (== level-restart-pending 0)
+          (do
+            (= level-restart-pending -1)
+            (level-restart)
+            (return true))
+          (return true))))
 
     (select
         (== [game]     current-state) (state-update-game      dt input)

@@ -1595,6 +1595,46 @@
     ; Five bottom rows
     (for y from 4 to 8
          (for x from -8 to 8 (entity-new-pullable-ensw x y))))
+
+
+    (fn ()
+    ; Top row
+    (entity-new-slope-es -5 -6)
+    (entity-new-bomb     -1 -6 7)
+
+    ; 3. row
+    (entity-new-wall      3 -4)
+    (entity-new-wall      4 -4)
+
+    ; 4. row
+    (entity-new-wall         -3 -3)
+    (entity-new-pass-counter  0 -3 1)
+    (entity-new-player        3 -3)
+    (entity-new-slope-sw      7 -3)
+
+    ; 6. row
+    (entity-new-turnstile-ns  7 -1)
+
+    ; 7. row
+    (entity-new-bomb -5 0 5)
+    (entity-new-pass-counter -2 0 2)
+    (entity-new-slope-nw 3 0)
+
+    ; 8. row
+    (entity-new-wall -7 1)
+    (entity-new-key  -6 1)
+    (entity-new-wall -4 1)
+    (entity-new-wall  6 1)
+    (entity-new-exit  7 1)
+
+    ; 10. row
+    (entity-new-pass-counter -1 3 3)
+
+    ; 11. row
+    (entity-new-slope-en -5 4)
+
+    ; 12. row
+    (entity-new-wall -1 5))
 ))
 
 

@@ -5,7 +5,6 @@
 #include <octaspire/dern/octaspire_dern_vm.h>
 #include <octaspire/dern/octaspire_dern_config.h>
 #include <octaspire/core/octaspire_memory.h>
-#include <octaspire/core/octaspire_region.h>
 #include <octaspire/core/octaspire_helpers.h>
 #include <octaspire/sdl2-utils/octaspire_sdl2_texture.h>
 #include <octaspire/sdl2-utils/octaspire_sdl2_animation.h>
@@ -246,7 +245,6 @@ void octaspire_maze_print_usage(char const * const binaryName, bool const useCol
     octaspire_maze_print_version(useColors);
     printf("\nusage: %s [option] ...\n", binaryName);
     printf("\nwhere [option] is one of the values listen below\n\n");
-    printf("-u  --use-region-allocator : use region allocator insteead regular malloc/free\n");
     printf("-f  --fullscreen           : start in fullscreen mode\n");
     printf("-s  --software-renderer    : use software renderer\n");
     printf("-c  --color-diagnostics    : use colors on unix like systems\n");
@@ -257,7 +255,6 @@ void octaspire_maze_print_usage(char const * const binaryName, bool const useCol
 int main(int argc, char *argv[])
 {
     bool useColors             = false;
-    bool useRegionAllocator    = false;
     bool startInFullscreenMode = false;
     bool useSoftwareRenderer   = false;
 
@@ -265,11 +262,7 @@ int main(int argc, char *argv[])
     {
         for (int i = 1; i < argc; ++i)
         {
-            if (strcmp(argv[i], "-u") == 0 || strcmp(argv[i], "--use-region-allocator") == 0)
-            {
-                useRegionAllocator = true;
-            }
-            else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--color-diagnostics") == 0)
+            if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--color-diagnostics") == 0)
             {
                 useColors = true;
             }
@@ -300,29 +293,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    octaspire_memory_allocator_t *allocator = 0;
-
-    if (useRegionAllocator)
-    {
-        octaspire_region_t *region = octaspire_region_new(
-            OCTASPIRE_DERN_CONFIG_MEMORY_ALLOCATOR_REGION_MIN_BLOCK_SIZE_IN_OCTETS);
-
-        if (!region)
-        {
-            octaspire_maze_print_message_c_str(
-                "Allocation failure",
-                OCTASPIRE_MAZE_MESSAGE_FATAL,
-                useColors);
-
-            exit(EXIT_FAILURE);
-        }
-
-        allocator = octaspire_memory_allocator_new(region);
-    }
-    else
-    {
-        allocator = octaspire_memory_allocator_new(0);
-    }
+    octaspire_memory_allocator_t *allocator = octaspire_memory_allocator_new(0);
 
     if (!allocator)
     {

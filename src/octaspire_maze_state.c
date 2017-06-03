@@ -300,6 +300,244 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_new(
     return octaspire_dern_vm_get_value_true(vm);
 }
 
+octaspire_dern_value_t *octaspire_maze_api_animation_custom_new(
+    octaspire_dern_vm_t *vm,
+    octaspire_dern_value_t *arguments,
+    octaspire_dern_value_t *environment)
+{
+    size_t const stackLength = octaspire_dern_vm_get_stack_length(vm);
+
+    octaspire_helpers_verify(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
+    octaspire_helpers_verify(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
+
+    size_t const numArgs = octaspire_dern_value_get_length(arguments);
+
+    if (numArgs != 3)
+    {
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "Builtin 'animation-custom-new' expects exactly three arguments. %zu arguments were given.",
+            octaspire_dern_value_get_length(arguments));
+    }
+
+    octaspire_dern_vm_push_value(vm, arguments);
+
+    // Name
+    octaspire_dern_value_t * const animNameVal =
+        octaspire_dern_value_as_vector_get_element_at(
+            arguments,
+            0);
+
+    if (animNameVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_STRING)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        if (animNameVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+        {
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return animNameVal;
+        }
+
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "First argument to builtin 'animation-custom-new' must be string value. "
+            "Now it has type %s.",
+            octaspire_dern_value_helper_get_type_as_c_string(animNameVal->typeTag));
+    }
+
+
+
+    // Type
+    octaspire_dern_value_t * const animTypeVal =
+        octaspire_dern_value_as_vector_get_element_at(
+            arguments,
+            1);
+
+    if (animTypeVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_STRING)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        if (animTypeVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+        {
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return animTypeVal;
+        }
+
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "Second argument to builtin 'animation-custom-new' must be string value. "
+            "Now it has type %s.",
+            octaspire_dern_value_helper_get_type_as_c_string(animTypeVal->typeTag));
+    }
+
+
+
+    // Position
+    octaspire_dern_value_t * const animPosVal =
+        octaspire_dern_value_as_vector_get_element_at(
+            arguments,
+            2);
+
+    if (animPosVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_VECTOR)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        if (animPosVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+        {
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return animPosVal;
+        }
+
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "Third argument to builtin 'animation-custom-new' must be vector value. "
+            "Now it has type %s.",
+            octaspire_dern_value_helper_get_type_as_c_string(animPosVal->typeTag));
+    }
+
+    if (octaspire_dern_value_as_vector_get_length(animPosVal) != 3)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "Third argument to builtin 'animation-custom-new' must be a vector with three values. "
+            "Now it has %zu values.",
+            octaspire_dern_value_as_vector_get_length(animPosVal));
+    }
+
+    int animPosX = 0;
+    int animPosY = 0;
+    int animPosZ = 0;
+
+    octaspire_dern_value_t *animPosXVal =
+        octaspire_dern_value_as_vector_get_element_at(animPosVal, 0);
+
+    if (animPosXVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+    {
+        octaspire_dern_value_t *tmpVal = octaspire_dern_vm_eval(vm, animPosXVal, environment);
+
+        octaspire_helpers_verify(tmpVal);
+
+        if (tmpVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+
+            if (tmpVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                return tmpVal;
+            }
+
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "X position to builtin 'animation-custom-new' must be or evaluate into an integer value. "
+                "Now it has type %s.",
+                octaspire_dern_value_helper_get_type_as_c_string(animPosXVal->typeTag));
+        }
+        else
+        {
+            animPosX = tmpVal->value.integer;
+        }
+    }
+    else
+    {
+        animPosX = animPosXVal->value.integer;
+    }
+
+    octaspire_dern_value_t *animPosYVal =
+        octaspire_dern_value_as_vector_get_element_at(animPosVal, 1);
+
+    if (animPosYVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+    {
+        octaspire_dern_value_t *tmpVal = octaspire_dern_vm_eval(vm, animPosYVal, environment);
+
+        octaspire_helpers_verify(tmpVal);
+
+        if (tmpVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+
+            if (tmpVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                return tmpVal;
+            }
+
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "Y position to builtin 'animation-custom-new' must be or evaluate into an integer value. "
+                "Now it has type %s.",
+                octaspire_dern_value_helper_get_type_as_c_string(animPosYVal->typeTag));
+        }
+        else
+        {
+            animPosY = tmpVal->value.integer;
+        }
+    }
+    else
+    {
+        animPosY = animPosYVal->value.integer;
+    }
+
+    octaspire_dern_value_t *animPosZVal =
+        octaspire_dern_value_as_vector_get_element_at(animPosVal, 2);
+
+    if (animPosZVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+    {
+        octaspire_dern_value_t *tmpVal = octaspire_dern_vm_eval(vm, animPosZVal, environment);
+
+        octaspire_helpers_verify(tmpVal);
+
+        if (tmpVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+
+            if (tmpVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                return tmpVal;
+            }
+
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "Z position to builtin 'animation-custom-new' must be or evaluate into an integer value. "
+                "Now it has type %s.",
+                octaspire_dern_value_helper_get_type_as_c_string(animPosZVal->typeTag));
+        }
+        else
+        {
+            animPosZ = tmpVal->value.integer;
+        }
+    }
+    else
+    {
+        animPosZ = animPosZVal->value.integer;
+    }
+
+    octaspire_dern_vm_pop_value(vm, arguments);
+
+    octaspire_maze_state_t *state = (octaspire_maze_state_t*)octaspire_dern_vm_get_user_data(vm);
+
+    if (!octaspire_maze_state_add_named_animation_of_type_to_position(
+            state,
+            octaspire_container_utf8_string_get_c_string(animNameVal->value.string),
+            octaspire_container_utf8_string_get_c_string(animTypeVal->value.string),
+            animPosX,
+            animPosY,
+            animPosZ))
+    {
+        abort();
+    }
+
+    octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+    return octaspire_dern_vm_get_value_true(vm);
+}
+
 octaspire_dern_value_t *octaspire_maze_api_animation_entity_remove(
     octaspire_dern_vm_t *vm,
     octaspire_dern_value_t *arguments,
@@ -733,6 +971,17 @@ octaspire_maze_state_t *octaspire_maze_state_new(
 
     if (!octaspire_dern_vm_create_and_register_new_builtin(
         self->vm,
+        "animation-custom-new",
+        octaspire_maze_api_animation_custom_new,
+        5,
+        "Add new animation to the scene",
+        octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
+    {
+        abort();
+    }
+
+    if (!octaspire_dern_vm_create_and_register_new_builtin(
+        self->vm,
         "animation-entity-remove",
         octaspire_maze_api_animation_entity_remove,
         1,
@@ -993,16 +1242,16 @@ void octaspire_maze_state_private_render_layer(
 {
     octaspire_helpers_verify(layer < 4);
 
-    size_t const numAnims = octaspire_container_hash_map_get_number_of_elements(self->animations);
+    octaspire_container_hash_map_element_iterator_t iter =
+        octaspire_container_hash_map_element_iterator_init(self->animations);
 
-    for (size_t i = 0; i < numAnims; ++i)
+    while (iter.element)
     {
         //octaspire_container_hash_map_element_t *elem  = octaspire_container_hash_map_get_at_index(self->animations, i);
 
         //octaspire_dern_value_print(octaspire_container_hash_map_element_get_key(elem), octaspire_dern_vm_get_allocator(self->vm));
         octaspire_sdl2_animation_t const * const animation =
-            octaspire_container_hash_map_element_get_value(
-                octaspire_container_hash_map_get_at_index(self->animations, i));
+            octaspire_container_hash_map_element_get_value(iter.element);
 
         octaspire_helpers_verify(animation);
 
@@ -1023,6 +1272,8 @@ void octaspire_maze_state_private_render_layer(
 
             octaspire_sdl2_animation_render(animation, renderer, texture, newOrigoX, origoY);
         }
+
+        octaspire_container_hash_map_element_iterator_next(&iter);
     }
 }
 

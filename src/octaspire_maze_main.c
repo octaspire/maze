@@ -89,8 +89,8 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
         {
             size_t const index = indexVal->value.integer;
             SDL_Rect rect;
-            rect.x = (index % 16) * 16;
-            rect.y = (index / 16) * 16;
+            rect.x = (index % 32) * 16;
+            rect.y = (index / 32) * 16;
             rect.w = 16;
             rect.h = 16;
             if (!octaspire_sdl2_animation_push_back_frame(animation, &rect, 0.125))
@@ -115,6 +115,217 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
                 "Now it has type %s.",
                 i + 1,
                 octaspire_dern_value_helper_get_type_as_c_string(indexVal->typeTag));
+        }
+    }
+
+    octaspire_dern_vm_pop_value(vm, arguments);
+
+    octaspire_maze_game_t *game = (octaspire_maze_game_t*)octaspire_dern_vm_get_user_data(vm);
+
+    if (!octaspire_maze_game_add_animation(
+            game,
+            octaspire_sdl2_animation_get_name(animation),
+            animation))
+    {
+        abort();
+    }
+
+    octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+    return octaspire_dern_vm_get_value_true(vm);
+}
+
+octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
+    octaspire_dern_vm_t *vm,
+    octaspire_dern_value_t *arguments,
+    octaspire_dern_value_t *environment)
+{
+    size_t const stackLength = octaspire_dern_vm_get_stack_length(vm);
+
+    octaspire_helpers_verify(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
+    octaspire_helpers_verify(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
+
+    size_t const numArgs = octaspire_dern_value_get_length(arguments);
+
+    if (numArgs < 5)
+    {
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "Builtin 'animation-custom-define' expects at least five arguments. %zu arguments were given.",
+            octaspire_dern_value_get_length(arguments));
+    }
+
+    octaspire_dern_vm_push_value(vm, arguments);
+
+    // Name
+    octaspire_dern_value_t * const animNameVal =
+        octaspire_dern_value_as_vector_get_element_at(
+            arguments,
+            0);
+
+    if (animNameVal->typeTag != OCTASPIRE_DERN_VALUE_TAG_STRING)
+    {
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        if (animNameVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+        {
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return animNameVal;
+        }
+
+        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        return octaspire_dern_vm_create_new_value_error_format(
+            vm,
+            "First argument to builtin 'animation-custom-define' must be string value. "
+            "Now it has type %s.",
+            octaspire_dern_value_helper_get_type_as_c_string(animNameVal->typeTag));
+    }
+
+    octaspire_sdl2_animation_t *animation = octaspire_sdl2_animation_new(
+        octaspire_container_utf8_string_get_c_string(animNameVal->value.string),
+        false,
+        octaspire_dern_vm_get_allocator(vm));
+
+    // Frame indices
+    for (size_t i = 1; (i+3) < numArgs; i +=4)
+    {
+
+        int32_t x = 0;
+        int32_t y = 0;
+        int32_t w = 0;
+        int32_t h = 0;
+
+        // x
+        octaspire_dern_value_t * val =
+            octaspire_dern_value_as_vector_get_element_at(
+                arguments,
+                i);
+
+        if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            x = val->value.integer;
+        }
+        else
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+
+            if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                return val;
+            }
+
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "%zuth argument to builtin 'animation-custom-define' must be integer value. "
+                "Now it has type %s.",
+                i + 1,
+                octaspire_dern_value_helper_get_type_as_c_string(val->typeTag));
+        }
+
+
+        // y
+        val =
+            octaspire_dern_value_as_vector_get_element_at(
+                arguments,
+                i + 1);
+
+        if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            y = val->value.integer;
+        }
+        else
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+
+            if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                return val;
+            }
+
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "%zuth argument to builtin 'animation-custom-define' must be integer value. "
+                "Now it has type %s.",
+                i + 1,
+                octaspire_dern_value_helper_get_type_as_c_string(val->typeTag));
+        }
+
+
+
+        // w
+        val =
+            octaspire_dern_value_as_vector_get_element_at(
+                arguments,
+                i + 2);
+
+        if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            w = val->value.integer;
+        }
+        else
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+
+            if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                return val;
+            }
+
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "%zuth argument to builtin 'animation-custom-define' must be integer value. "
+                "Now it has type %s.",
+                i + 1,
+                octaspire_dern_value_helper_get_type_as_c_string(val->typeTag));
+        }
+
+
+
+
+        // h
+        val =
+            octaspire_dern_value_as_vector_get_element_at(
+                arguments,
+                i + 3);
+
+        if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_INTEGER)
+        {
+            h = val->value.integer;
+        }
+        else
+        {
+            octaspire_dern_vm_pop_value(vm, arguments);
+
+            if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
+            {
+                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                return val;
+            }
+
+            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            return octaspire_dern_vm_create_new_value_error_format(
+                vm,
+                "%zuth argument to builtin 'animation-custom-define' must be integer value. "
+                "Now it has type %s.",
+                i + 1,
+                octaspire_dern_value_helper_get_type_as_c_string(val->typeTag));
+        }
+
+
+        SDL_Rect rect;
+        rect.x = x;
+        rect.y = y;
+        rect.w = w;
+        rect.h = h;
+        if (!octaspire_sdl2_animation_push_back_frame(animation, &rect, 0.125))
+        {
+            abort();
         }
     }
 
@@ -449,6 +660,17 @@ int main(int argc, char *argv[])
         octaspire_maze_api_animation_entity_define,
         5,
         "Create new kind of animation from texture atlas with fixed sprite sizes",
+        octaspire_dern_vm_get_global_environment(vm)->value.environment))
+    {
+        abort();
+    }
+
+    if (!octaspire_dern_vm_create_and_register_new_builtin(
+        vm,
+        "animation-custom-define",
+        octaspire_maze_api_animation_custom_define,
+        5,
+        "Create new kind of animation from texture atlas with given sprite sizes",
         octaspire_dern_vm_get_global_environment(vm)->value.environment))
     {
         abort();

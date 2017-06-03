@@ -1814,7 +1814,7 @@
 
     (level-load lnum)))
 
-(define current-state [current-state] [game])
+(define current-state [current-state] [intro])
 (define pending-input [pending input that is not yet handled] '())
 
 (define pop-input [pop input] '() (fn ()
@@ -1926,6 +1926,16 @@
 
     true))
 
+
+(define state-update-intro [state-update]
+                     '(dt [delta time]
+                       input [string telling the input, if any: u, d, l, r]) (fn (dt input)
+
+    (if (== input [up]) (do (= current-state [intro-closing]) (tween-level-out)))
+
+    true))
+
+
 (define state-update-tween-out [state-update]
                      '(dt [delta time]
                        input [string telling the input, if any: u, d, l, r]) (fn (dt input)
@@ -1946,6 +1956,7 @@
           (return true))))
 
     (select
+        (== [intro]    current-state) (state-update-intro     dt input)
         (== [game]     current-state) (state-update-game      dt input)
         (== [tweenOut] current-state) (state-update-tween-out dt input))
 
@@ -1955,15 +1966,19 @@
 
 
 (define state-on-tween-out-done [...] '() (fn ()
-    ;(message-show 0)
-    (level-next)))
+    (if (== [intro-closing] current-state)
+      (do
+        (animation-entity-remove [help])
+        (= current-state [game])
+        (level-load 1))
+      (level-next))
+    ))
 
 (define state-on-tween-in-done [...] '() (fn ()
     (= current-state [game])))
 
 ; Game starts here
-(level-load 1)
-
+(animation-custom-new [help] [help] '(-240 -209 0))
 
 
 ;;; Here are some helper functions for debugging purposes.

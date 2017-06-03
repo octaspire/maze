@@ -54,6 +54,9 @@
 (animation-entity-define [toggle-nsw-idle]     96)
 (animation-entity-define [toggle-ensw-idle]    97)
 
+;                                              x y    w   h
+(animation-custom-define [help]                4 82   481 418)
+
 (define create-stop-counter-i [.] '(i [i]) (fn (i)
     (define id [id] (string-format [stop-counter-{}] i))
     (animation-entity-define id (+ 42 i))))

@@ -1717,6 +1717,73 @@
     ; ========== 17. level ==========
     (fn ()
     ; Top row
+    (for x from -5 to 5 (entity-new-wall x -9))
+
+    ; 2. row
+    (entity-new-wall -5 -8)
+    (entity-new-wall  5 -8)
+
+    ; 3. row
+    (entity-new-wall -5 -7)
+    (entity-new-wall  5 -7)
+
+    ; 4. row
+    (for x from -5 to 1 (entity-new-wall x -6))
+    (for x from  4 to 5 (entity-new-wall x -6))
+
+    ; 5. row
+    (entity-new-wall                              -5 -5)
+    (entity-new-exit                              -4 -5)
+    (for x from -3 to 0 (entity-new-pullable-ensw  x -5))
+    (entity-new-wall                               1 -5)
+    (entity-new-wall                               5 -5)
+
+    ; 6 - 10. rows
+    (for y from -4 to 0
+        (entity-new-wall                              -5 y)
+        (for x from -4 to 0 (entity-new-pullable-ensw  x y))
+        (entity-new-wall                               1 y)
+        (entity-new-wall                               5 y))
+
+    ; 11. row
+    (entity-new-wall                              -5 1)
+    (for x from -4 to 1 (entity-new-pullable-ensw  x 1))
+    (entity-new-wall                               5 1)
+
+    ; 12. row
+    (entity-new-wall -5 2)
+    (entity-new-wall  5 2)
+
+    ; 13. row
+    (entity-new-wall -5 3)
+    (for x from 4 to 5 (entity-new-wall x 3))
+
+    ; 14. row
+    (entity-new-wall -5 4)
+    (entity-new-wall  5 4)
+
+    ; 15. row
+    (entity-new-wall -5 5)
+    (entity-new-player 1 5)
+    (entity-new-wall -5 5)
+
+    ; 16. row
+    (entity-new-wall -5 6)
+    (for x from -3 to 2 (entity-new-wall x 6))
+    (entity-new-wall -5 6)
+
+    ; 17. row
+    (entity-new-wall -5 7)
+    (entity-new-wall  5 7)
+
+    ; 18. row
+    (for x from -5 to 5 (entity-new-wall x 8)))
+
+
+
+    ; ========== 18. level ==========
+    (fn ()
+    ; Top row
     (for i from -6 to 6 (entity-new-stopper i  -6))
 
     ; 2. row

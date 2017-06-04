@@ -890,17 +890,24 @@
 
 (define levels [levels] '(
 
+    ; ========== 1. level ==========
     (fn ()
     ; Top row
     (entity-new-player -6 0)
     (entity-new-exit    6 0))
 
+
+
+    ; ========== 2. level ==========
     (fn ()
     ; Top row
     (entity-new-player -6 0)
     (entity-new-key     0 0)
     (entity-new-exit    6 0))
 
+
+
+    ; ========== 3. level ==========
     (fn ()
     ; Top row
     (entity-new-wall    -6 0)
@@ -909,6 +916,9 @@
     (entity-new-key      0 0)
     (entity-new-exit     6 0))
 
+
+
+    ; ========== 4. level ==========
     (fn ()
     ; Top row
     (entity-new-wall          0 -5)
@@ -963,7 +973,7 @@
     (entity-new-wall          0  5))
 
 
-
+    ; ========== 5. level ==========
     (fn ()
     ; Top row
     (entity-new-slope-es   0 -4)
@@ -1004,6 +1014,7 @@
 
 
 
+    ; ========== 6. level ==========
     (fn ()
     ; Top row
     (entity-new-wall      -7  -7)
@@ -1078,6 +1089,7 @@
 
 
 
+    ; ========== 7. level ==========
     (fn ()
     ; top row
     (for i from -8 to 0 (entity-new-wall i -6))
@@ -1170,6 +1182,60 @@
 
 
 
+    ; ========== 8. level ==========
+    (fn ()
+    ; Top row
+    (for i from -7 to -3 (entity-new-wall i -4))
+    (for i from -1 to  1 (entity-new-wall i -4))
+
+    ; 2. row
+    (entity-new-wall -7 -3)
+    (entity-new-wall  0 -3)
+
+    ; 3. row
+    (entity-new-wall         -7 -2  )
+    (entity-new-wall          0 -2  )
+    (entity-new-pass-counter  1 -2 2)
+
+    ; 4. row
+    (entity-new-exit         -8 -1  )
+    (entity-new-pass-counter -3 -1 4)
+    (entity-new-turnstile-ew  0 -1  )
+    (entity-new-pass-counter  4 -1 2)
+    (entity-new-slope-sw      6 -1  )
+
+    ; 5. row
+    (entity-new-wall         -6 0)
+    (entity-new-player       -5 0)
+    (entity-new-wall          0 0)
+    (entity-new-wall          8 0)
+
+    ; 6. row
+    (entity-new-wall         -6 1  )
+    (entity-new-turnstile-we  0 1  )
+    (entity-new-stop-counter  3 1 4)
+    (entity-new-slope-nw      6 1  )
+
+    ; 7. row
+    (entity-new-wall         -6 2  )
+    (entity-new-pass-counter -4 2 1)
+
+    ; 8. row
+    (entity-new-wall         -6 3  )
+    (entity-new-stop-counter -2 3 1)
+    (entity-new-wall          0 3  )
+    (entity-new-key           7 3  )
+
+    ; Last row
+    (entity-new-wall         -6 4 )
+    (entity-new-wall         -5 4 )
+    (entity-new-wall          0 4 )
+    (entity-new-stop-counter  1 4 1)
+    (entity-new-wall          7 4 ))
+
+
+
+    ; ========== 9. level ==========
     (fn ()
     ; Top row
     (entity-new-exit          0  -9)
@@ -1218,6 +1284,437 @@
 
 
 
+    ; ========== 10. level ==========
+    (fn ()
+    ; Top row
+    (entity-new-wall 1 -8)
+
+    ; 2. row
+    (entity-new-wall -3 -7)
+    (entity-new-key  -1 -7)
+
+    ; 5. row
+    (entity-new-wall -6 -4)
+
+    ; 6. row
+    (entity-new-wall -7 -3)
+    (entity-new-wall  2 -3)
+    (entity-new-wall  6 -3)
+
+    ; 7. row
+    (entity-new-wall -5 -2)
+
+    ; 8.row
+    (entity-new-wall -7 -1)
+    (entity-new-wall -4 -1)
+
+    ; 9. row
+    (entity-new-key         -7 0)
+    (entity-new-wall        -6 0)
+    (entity-new-wall        -3 0)
+    (entity-new-pass-counter 4 0 1)
+    (entity-new-wall         5 0)
+    (entity-new-exit         8 0)
+
+    ; 10. row
+    (entity-new-wall        -8 1)
+    (entity-new-wall        -5 1)
+    (entity-new-wall        -2 1)
+    (entity-new-pass-counter 6 1 3)
+
+    ; 11. row
+    (entity-new-wall        -7 2)
+    (entity-new-wall        -4 2)
+    (entity-new-wall        -1 2)
+    (entity-new-wall         1 2)
+    (entity-new-stop-counter 7 2 1)
+
+    ; 12. row
+    (entity-new-wall        -6 3)
+    (entity-new-wall        -3 3)
+    (entity-new-wall         0 3)
+    (entity-new-pass-counter 3 3 3)
+    (entity-new-wall         5 3)
+    (entity-new-wall         6 3)
+
+    ; 13. row
+    (entity-new-wall        -5 4)
+    (entity-new-wall        -2 4)
+    (entity-new-key         -1 4)
+
+    ; 14. row
+    (entity-new-wall        -4 5)
+    (entity-new-wall        -1 5)
+    (entity-new-wall         0 5)
+
+    ; 15. row
+    (entity-new-wall        -3 6)
+    (entity-new-wall         4 6)
+
+    ; 16. row
+    (entity-new-wall        -2 7)
+    (entity-new-wall         0 7)
+    (entity-new-wall         2 7)
+
+    ; 17. row
+    (entity-new-wall         0 8)
+    (entity-new-player       7 8))
+
+
+
+    ; ========== 11. level ==========
+    (fn ()
+    ; Top to fifth rows
+    (for y from -8 to -4
+         (for x from -8 to 8 (entity-new-pullable-ensw x y)))
+
+    ; 6. row
+    (for x from -8 to -2 (entity-new-pullable-ensw x -3))
+    (for x from  2 to  8 (entity-new-pullable-ensw x -3))
+
+    ; 7. row
+    (for x from -8 to -3 (entity-new-pullable-ensw x -2))
+    (for x from  3 to  8 (entity-new-pullable-ensw x -2))
+
+    ; 8. row
+    (entity-new-exit -10 -1)
+    (for x from -8 to -4 (entity-new-pullable-ensw x -1))
+    (for x from  4 to  8 (entity-new-pullable-ensw x -1))
+
+    ; 9. row
+    (for x from -8 to -4 (entity-new-pullable-ensw x  0))
+    (entity-new-player 0  0)
+    (for x from  4 to  8 (entity-new-pullable-ensw x  0))
+
+    ; 10. row
+    (for x from -8 to -4 (entity-new-pullable-ensw x  1))
+    (for x from  4 to  8 (entity-new-pullable-ensw x  1))
+
+    ; 11. row
+    (for x from -8 to -3 (entity-new-pullable-ensw x  2))
+    (for x from  3 to  8 (entity-new-pullable-ensw x  2))
+
+    ; 12. row
+    (for x from -8 to -2 (entity-new-pullable-ensw x  3))
+    (for x from  2 to  8 (entity-new-pullable-ensw x  3))
+
+    ; Five bottom rows
+    (for y from 4 to 8
+         (for x from -8 to 8 (entity-new-pullable-ensw x y))))
+
+
+
+    ; ========== 12. level ==========
+    (fn ()
+    ; Top row
+    (entity-new-wall     -7  -6)
+    (entity-new-wall     -6  -6)
+    (entity-new-slope-es  0  -6)
+    (entity-new-slope-sw  5  -6)
+
+    ; 2. row
+    (entity-new-key      -7  -5)
+    (entity-new-key      -6  -5)
+
+    ; 3. row
+    (entity-new-wall         -5  -4)
+    (entity-new-pass-counter -3  -4  1)
+    (entity-new-key           0  -4)
+    (entity-new-pullable-w    1  -4)
+    (for x from 2 to 4 (entity-new-wall x -4))
+
+    ; 4. row
+    (entity-new-turnstile-we 0 -3)
+    (entity-new-turnstile-we 4 -3)
+    (entity-new-key          6 -3)
+    (entity-new-slope-sw     7 -3)
+
+    ; 5. row
+    (entity-new-pass-counter -6  -2  2)
+    (entity-new-wall         -1  -2)
+    (entity-new-wall          0  -2)
+    (entity-new-turnstile-ns  1  -2)
+    (entity-new-wall          4  -2)
+
+    ; 6. row
+    (entity-new-key  -5 -1)
+    (entity-new-wall -4 -1)
+    (entity-new-wall  0 -1)
+    (entity-new-wall  4 -1)
+
+    ; 7. row
+    (entity-new-pullable-nw 4 0)
+    (entity-new-slope-nw    5 0)
+
+    ; 8. row
+    (entity-new-pullable-n  1 1)
+    (for x from 2 to 4 (entity-new-wall x 1))
+
+    ; 9. row
+    (entity-new-slope-en -7 2)
+    (entity-new-key      -1 2)
+    (entity-new-slope-sw  6 2)
+
+    ; 10. row
+    (entity-new-pass-counter -6 3 4)
+    (entity-new-turnstile-ns  7 3)
+
+    ; 11. row
+    (entity-new-wall -7 4)
+
+    ; 12. row
+    (entity-new-wall    -6 5)
+    (entity-new-exit    -5 5)
+    (entity-new-player   0 5)
+    (entity-new-slope-nw 6 5)
+    (entity-new-wall     7 5))
+
+
+
+    ; ========== 13. level ==========
+    (fn ()
+    ; Top row
+    (entity-new-slope-es -5 -6)
+    (entity-new-bomb     -1 -6 7)
+
+    ; 3. row
+    (entity-new-wall      3 -4)
+    (entity-new-wall      4 -4)
+
+    ; 4. row
+    (entity-new-wall         -3 -3)
+    (entity-new-pass-counter  0 -3 1)
+    (entity-new-player        3 -3)
+    (entity-new-slope-sw      7 -3)
+
+    ; 6. row
+    (entity-new-turnstile-ns  7 -1)
+
+    ; 7. row
+    (entity-new-bomb -5 0 5)
+    (entity-new-pass-counter -2 0 2)
+    (entity-new-slope-nw 3 0)
+
+    ; 8. row
+    (entity-new-wall -7 1)
+    (entity-new-key  -6 1)
+    (entity-new-wall -4 1)
+    (entity-new-wall  6 1)
+    (entity-new-exit  7 1)
+
+    ; 10. row
+    (entity-new-pass-counter -1 3 3)
+
+    ; 11. row
+    (entity-new-slope-en -5 4)
+
+    ; 12. row
+    (entity-new-wall -1 5))
+
+
+
+    ; ========== 14. level ==========
+    (fn ()
+    ; Top row
+    (for x from -9 to 9 (entity-new-wall x -4))
+
+    ; 2. row
+    (entity-new-wall         -9 -3)
+    (entity-new-stop-counter -3 -3 1)
+    (entity-new-stop-counter  1 -3 1)
+    (entity-new-stop-counter  5 -3 1)
+    (entity-new-key           8 -3)
+    (entity-new-wall          9 -3)
+
+    ; 3. row
+    (entity-new-wall                     -9 -2)
+    (for x from -7 to -6 (entity-new-wall x -2))
+    (for x from -3 to -2 (entity-new-wall x -2))
+    (for x from  1 to  2 (entity-new-wall x -2))
+    (for x from  5 to  7 (entity-new-wall x -2))
+    (entity-new-turnstile-ns              8 -2)
+    (entity-new-wall                      9 -2)
+
+    ; 4. row
+    (entity-new-wall         -9 -1)
+    (entity-new-pullable-ns  -4 -1)
+    (entity-new-pullable-ns   0 -1)
+    (entity-new-pullable-ns   4 -1)
+    (entity-new-wall          9 -1)
+
+    ; 5. row
+    (for x from -9 to -5 (entity-new-wall x 0))
+    (for x from -3 to -1 (entity-new-wall x 0))
+    (for x from  1 to  3 (entity-new-wall x 0))
+    (for x from  5 to  7 (entity-new-wall x 0))
+    (entity-new-wall                      9 0)
+
+    ; 6. row
+    (entity-new-exit         -9 1)
+    (entity-new-player       -7 1)
+    (entity-new-slope-sw     -3 1)
+    (entity-new-slope-sw      1 1)
+    (entity-new-slope-sw      5 1)
+    (entity-new-wall          9 1)
+
+    ; 7. row
+    (entity-new-wall         -9 2)
+    (entity-new-wall         -5 2)
+    (entity-new-wall         -1 2)
+    (entity-new-wall          3 2)
+    (entity-new-wall          9 2)
+
+    ; Bottom row
+    (for x from -9 to -5 (entity-new-wall  x 3))
+    (entity-new-pullable-n                -4 3)
+    (for x from -3 to -1 (entity-new-wall  x 3))
+    (entity-new-pullable-n                 0 3)
+    (for x from  1 to  3 (entity-new-wall  x 3))
+    (entity-new-pullable-n                 4 3)
+    (for x from  5 to  9 (entity-new-wall  x 3)))
+
+
+
+    ; ========== 15. level ==========
+    (fn ()
+    ; Top row
+    (for i from -6 to 6 (entity-new-wall i -6))
+
+    ; 2. row
+    (entity-new-wall -6 -5)
+    (for i from -5 to 5 (entity-new-stopper i -5))
+    (entity-new-wall  6 -5)
+
+    ; 3 - 5. row
+    (for i from -4 to -2
+        (entity-new-wall    -6 i)
+        (entity-new-stopper -5 i)
+        (entity-new-stopper  5 i)
+        (entity-new-wall     6 i))
+
+    ; 6. row
+    (entity-new-wall    -6 -1)
+    (entity-new-stopper -5 -1)
+    (for i from -3 to 3 (entity-new-pullable-ensw i -1))
+    (entity-new-stopper  5 -1)
+    (entity-new-wall     6 -1)
+
+    ; 7. row
+    (entity-new-wall    -6 0)
+    (entity-new-stopper -5 0)
+    (for i from -3 to 3 step 2 (entity-new-pullable-ensw i 0))
+    (for i from -2 to 2 step 2 (entity-new-toggle        i 0))
+    (entity-new-stopper  5 0)
+    (entity-new-wall     6 0)
+
+    ; 8. row
+    (entity-new-wall    -6 1)
+    (entity-new-stopper -5 1)
+    (for i from -3 to 3 (entity-new-pullable-ensw i 1))
+    (entity-new-stopper  5 1)
+    (entity-new-wall     6 1)
+
+    ; 9 - 11. row
+    (for i from 2 to 4
+        (entity-new-wall    -6 i)
+        (entity-new-stopper -5 i)
+        (entity-new-stopper  5 i)
+        (entity-new-wall     6 i))
+
+    (entity-new-player       4 4)
+
+    ; 12. row
+    (entity-new-wall -6 5)
+    (for i from -5 to 5 (entity-new-stopper i 5))
+    (entity-new-wall  6 5)
+
+    ; Bottom row
+    (for i from -6 to -1 (entity-new-wall i 6))
+    (entity-new-exit 0 6)
+    (for i from  1 to  6 (entity-new-wall i 6)))
+
+
+
+    ; ========== 16. level ==========
+    (fn ()
+    ; Top row
+    (for x from -8 to 8 (entity-new-wall x -5))
+
+    ; 2. row
+    (entity-new-wall         -8 -4)
+    (entity-new-wall         -4 -4)
+    (entity-new-wall          1 -4)
+    (entity-new-turnstile-we  4 -4)
+    (entity-new-bomb          8 -4 5)
+
+    ; 3. row
+    (entity-new-bomb         -8 -3 5)
+    (entity-new-player       -7 -3)
+    (entity-new-turnstile-ew -4 -3)
+    (entity-new-wall          1 -3)
+    (entity-new-pass-counter  2 -3 2)
+    (entity-new-turnstile-ew  4 -3)
+    (entity-new-wall          8 -3)
+
+    ; 4. row
+    (entity-new-wall         -8 -2)
+    (entity-new-turnstile-we -4 -2)
+    (entity-new-pass-counter -3 -2 2)
+    (entity-new-pass-counter -1 -2 2)
+    (entity-new-turnstile-ew  1 -2)
+    (entity-new-wall          4 -2)
+    (entity-new-pass-counter  5 -2 3)
+    (entity-new-key           6 -2)
+    (entity-new-bomb          8 -2 5)
+
+    ; 5. row
+    (entity-new-wall                      -8 -1)
+    (for x from -4 to -2 (entity-new-wall  x -1))
+    (entity-new-turnstile-we               1 -1)
+    (entity-new-bomb                       4 -1 5)
+    (entity-new-pass-counter               5 -1 2)
+    (entity-new-wall                       8 -1)
+
+    ; 6. row
+    (entity-new-wall                      -8 0)
+    (entity-new-wall                      -4 0)
+    (entity-new-wall                       1 0)
+    (entity-new-wall                       4 0)
+    (entity-new-wall                       8 0)
+
+    ; 7. row
+    (entity-new-wall                      -8 1)
+    (entity-new-pass-counter              -5 1 2)
+    (entity-new-wall                      -4 1)
+    (entity-new-wall                       1 1)
+    (for x from 4 to 8 (entity-new-wall    x 1))
+
+    ; 8. row
+    (for x from -8 to -7 (entity-new-wall  x 2))
+    (entity-new-turnstile-ns              -6 2)
+    (for x from -5 to -4 (entity-new-wall  x 2))
+    (entity-new-pass-counter              -3 2 1)
+    (entity-new-wall                      -2 2)
+    (for x from 1 to 2 (entity-new-wall    x 2))
+    (entity-new-turnstile-ns               3 2)
+    (entity-new-wall                       4 2)
+    (entity-new-wall                       8 2)
+
+    ; 9. row
+    (entity-new-exit                      -8 3)
+    (entity-new-wall                      -2 3)
+    (entity-new-wall                       1 3)
+    (entity-new-wall                       8 3)
+
+    ; Bottom row
+    (entity-new-slope-en                  -6 4)
+    (entity-new-bomb                      -2 4 20)
+    (entity-new-slope-sw                  -1 4)
+    (for x from 0 to 8 (entity-new-wall    x 4)))
+
+
+
+    ; ========== 17. level ==========
     (fn ()
     ; Top row
     (for i from -6 to 6 (entity-new-stopper i  -6))
@@ -1302,479 +1799,6 @@
     (entity-new-player      0   8))
 
 
-
-    (fn ()
-    ; Top row
-    (for i from -6 to 6 (entity-new-wall i -6))
-
-    ; 2. row
-    (entity-new-wall -6 -5)
-    (for i from -5 to 5 (entity-new-stopper i -5))
-    (entity-new-wall  6 -5)
-
-    ; 3 - 5. row
-    (for i from -4 to -2
-        (entity-new-wall    -6 i)
-        (entity-new-stopper -5 i)
-        (entity-new-stopper  5 i)
-        (entity-new-wall     6 i))
-
-    ; 6. row
-    (entity-new-wall    -6 -1)
-    (entity-new-stopper -5 -1)
-    (for i from -3 to 3 (entity-new-pullable-ensw i -1))
-    (entity-new-stopper  5 -1)
-    (entity-new-wall     6 -1)
-
-    ; 7. row
-    (entity-new-wall    -6 0)
-    (entity-new-stopper -5 0)
-    (for i from -3 to 3 step 2 (entity-new-pullable-ensw i 0))
-    (for i from -2 to 2 step 2 (entity-new-toggle        i 0))
-    (entity-new-stopper  5 0)
-    (entity-new-wall     6 0)
-
-    ; 8. row
-    (entity-new-wall    -6 1)
-    (entity-new-stopper -5 1)
-    (for i from -3 to 3 (entity-new-pullable-ensw i 1))
-    (entity-new-stopper  5 1)
-    (entity-new-wall     6 1)
-
-    ; 9 - 11. row
-    (for i from 2 to 4
-        (entity-new-wall    -6 i)
-        (entity-new-stopper -5 i)
-        (entity-new-stopper  5 i)
-        (entity-new-wall     6 i))
-
-    (entity-new-player       4 4)
-
-    ; 12. row
-    (entity-new-wall -6 5)
-    (for i from -5 to 5 (entity-new-stopper i 5))
-    (entity-new-wall  6 5)
-
-    ; Bottom row
-    (for i from -6 to -1 (entity-new-wall i 6))
-    (entity-new-exit 0 6)
-    (for i from  1 to  6 (entity-new-wall i 6)))
-
-
-
-    (fn ()
-    ; Top row
-    (entity-new-wall 1 -8)
-
-    ; 2. row
-    (entity-new-wall -3 -7)
-    (entity-new-key  -1 -7)
-
-    ; 5. row
-    (entity-new-wall -6 -4)
-
-    ; 6. row
-    (entity-new-wall -7 -3)
-    (entity-new-wall  2 -3)
-    (entity-new-wall  6 -3)
-
-    ; 7. row
-    (entity-new-wall -5 -2)
-
-    ; 8.row
-    (entity-new-wall -7 -1)
-    (entity-new-wall -4 -1)
-
-    ; 9. row
-    (entity-new-key         -7 0)
-    (entity-new-wall        -6 0)
-    (entity-new-wall        -3 0)
-    (entity-new-pass-counter 4 0 1)
-    (entity-new-wall         5 0)
-    (entity-new-exit         8 0)
-
-    ; 10. row
-    (entity-new-wall        -8 1)
-    (entity-new-wall        -5 1)
-    (entity-new-wall        -2 1)
-    (entity-new-pass-counter 6 1 3)
-
-    ; 11. row
-    (entity-new-wall        -7 2)
-    (entity-new-wall        -4 2)
-    (entity-new-wall        -1 2)
-    (entity-new-wall         1 2)
-    (entity-new-stop-counter 7 2 1)
-
-    ; 12. row
-    (entity-new-wall        -6 3)
-    (entity-new-wall        -3 3)
-    (entity-new-wall         0 3)
-    (entity-new-pass-counter 3 3 3)
-    (entity-new-wall         5 3)
-    (entity-new-wall         6 3)
-
-    ; 13. row
-    (entity-new-wall        -5 4)
-    (entity-new-wall        -2 4)
-    (entity-new-key         -1 4)
-
-    ; 14. row
-    (entity-new-wall        -4 5)
-    (entity-new-wall        -1 5)
-    (entity-new-wall         0 5)
-
-    ; 15. row
-    (entity-new-wall        -3 6)
-    (entity-new-wall         4 6)
-
-    ; 16. row
-    (entity-new-wall        -2 7)
-    (entity-new-wall         0 7)
-    (entity-new-wall         2 7)
-
-    ; 17. row
-    (entity-new-wall         0 8)
-    (entity-new-player       7 8))
-
-
-
-    (fn ()
-    ; Top row
-    (for i from -7 to -3 (entity-new-wall i -4))
-    (for i from -1 to  1 (entity-new-wall i -4))
-
-    ; 2. row
-    (entity-new-wall -7 -3)
-    (entity-new-wall  0 -3)
-
-    ; 3. row
-    (entity-new-wall         -7 -2  )
-    (entity-new-wall          0 -2  )
-    (entity-new-pass-counter  1 -2 2)
-
-    ; 4. row
-    (entity-new-exit         -8 -1  )
-    (entity-new-pass-counter -3 -1 4)
-    (entity-new-turnstile-ew  0 -1  )
-    (entity-new-pass-counter  4 -1 2)
-    (entity-new-slope-sw      6 -1  )
-
-    ; 5. row
-    (entity-new-wall         -6 0)
-    (entity-new-player       -5 0)
-    (entity-new-wall          0 0)
-    (entity-new-wall          8 0)
-
-    ; 6. row
-    (entity-new-wall         -6 1  )
-    (entity-new-turnstile-we  0 1  )
-    (entity-new-stop-counter  3 1 4)
-    (entity-new-slope-nw      6 1  )
-
-    ; 7. row
-    (entity-new-wall         -6 2  )
-    (entity-new-pass-counter -4 2 1)
-
-    ; 8. row
-    (entity-new-wall         -6 3  )
-    (entity-new-stop-counter -2 3 1)
-    (entity-new-wall          0 3  )
-    (entity-new-key           7 3  )
-
-    ; Last row
-    (entity-new-wall         -6 4 )
-    (entity-new-wall         -5 4 )
-    (entity-new-wall          0 4 )
-    (entity-new-stop-counter  1 4 1)
-    (entity-new-wall          7 4 ))
-
-
-
-    (fn ()
-    ; Top row
-    (entity-new-wall     -7  -6)
-    (entity-new-wall     -6  -6)
-    (entity-new-slope-es  0  -6)
-    (entity-new-slope-sw  5  -6)
-
-    ; 2. row
-    (entity-new-key      -7  -5)
-    (entity-new-key      -6  -5)
-
-    ; 3. row
-    (entity-new-wall         -5  -4)
-    (entity-new-pass-counter -3  -4  1)
-    (entity-new-key           0  -4)
-    (entity-new-pullable-w    1  -4)
-    (for x from 2 to 4 (entity-new-wall x -4))
-
-    ; 4. row
-    (entity-new-turnstile-we 0 -3)
-    (entity-new-turnstile-we 4 -3)
-    (entity-new-key          6 -3)
-    (entity-new-slope-sw     7 -3)
-
-    ; 5. row
-    (entity-new-pass-counter -6  -2  2)
-    (entity-new-wall         -1  -2)
-    (entity-new-wall          0  -2)
-    (entity-new-turnstile-ns  1  -2)
-    (entity-new-wall          4  -2)
-
-    ; 6. row
-    (entity-new-key  -5 -1)
-    (entity-new-wall -4 -1)
-    (entity-new-wall  0 -1)
-    (entity-new-wall  4 -1)
-
-    ; 7. row
-    (entity-new-pullable-nw 4 0)
-    (entity-new-slope-nw    5 0)
-
-    ; 8. row
-    (entity-new-pullable-n  1 1)
-    (for x from 2 to 4 (entity-new-wall x 1))
-
-    ; 9. row
-    (entity-new-slope-en -7 2)
-    (entity-new-key      -1 2)
-    (entity-new-slope-sw  6 2)
-
-    ; 10. row
-    (entity-new-pass-counter -6 3 4)
-    (entity-new-turnstile-ns  7 3)
-
-    ; 11. row
-    (entity-new-wall -7 4)
-
-    ; 12. row
-    (entity-new-wall    -6 5)
-    (entity-new-exit    -5 5)
-    (entity-new-player   0 5)
-    (entity-new-slope-nw 6 5)
-    (entity-new-wall     7 5))
-
-
-
-    (fn ()
-    ; Top to fifth rows
-    (for y from -8 to -4
-         (for x from -8 to 8 (entity-new-pullable-ensw x y)))
-
-    ; 6. row
-    (for x from -8 to -2 (entity-new-pullable-ensw x -3))
-    (for x from  2 to  8 (entity-new-pullable-ensw x -3))
-
-    ; 7. row
-    (for x from -8 to -3 (entity-new-pullable-ensw x -2))
-    (for x from  3 to  8 (entity-new-pullable-ensw x -2))
-
-    ; 8. row
-    (entity-new-exit -10 -1)
-    (for x from -8 to -4 (entity-new-pullable-ensw x -1))
-    (for x from  4 to  8 (entity-new-pullable-ensw x -1))
-
-    ; 9. row
-    (for x from -8 to -4 (entity-new-pullable-ensw x  0))
-    (entity-new-player 0  0)
-    (for x from  4 to  8 (entity-new-pullable-ensw x  0))
-
-    ; 10. row
-    (for x from -8 to -4 (entity-new-pullable-ensw x  1))
-    (for x from  4 to  8 (entity-new-pullable-ensw x  1))
-
-    ; 11. row
-    (for x from -8 to -3 (entity-new-pullable-ensw x  2))
-    (for x from  3 to  8 (entity-new-pullable-ensw x  2))
-
-    ; 12. row
-    (for x from -8 to -2 (entity-new-pullable-ensw x  3))
-    (for x from  2 to  8 (entity-new-pullable-ensw x  3))
-
-    ; Five bottom rows
-    (for y from 4 to 8
-         (for x from -8 to 8 (entity-new-pullable-ensw x y))))
-
-
-    (fn ()
-    ; Top row
-    (entity-new-slope-es -5 -6)
-    (entity-new-bomb     -1 -6 7)
-
-    ; 3. row
-    (entity-new-wall      3 -4)
-    (entity-new-wall      4 -4)
-
-    ; 4. row
-    (entity-new-wall         -3 -3)
-    (entity-new-pass-counter  0 -3 1)
-    (entity-new-player        3 -3)
-    (entity-new-slope-sw      7 -3)
-
-    ; 6. row
-    (entity-new-turnstile-ns  7 -1)
-
-    ; 7. row
-    (entity-new-bomb -5 0 5)
-    (entity-new-pass-counter -2 0 2)
-    (entity-new-slope-nw 3 0)
-
-    ; 8. row
-    (entity-new-wall -7 1)
-    (entity-new-key  -6 1)
-    (entity-new-wall -4 1)
-    (entity-new-wall  6 1)
-    (entity-new-exit  7 1)
-
-    ; 10. row
-    (entity-new-pass-counter -1 3 3)
-
-    ; 11. row
-    (entity-new-slope-en -5 4)
-
-    ; 12. row
-    (entity-new-wall -1 5))
-
-
-
-
-    (fn ()
-    ; Top row
-    (for x from -9 to 9 (entity-new-wall x -4))
-
-    ; 2. row
-    (entity-new-wall         -9 -3)
-    (entity-new-stop-counter -3 -3 1)
-    (entity-new-stop-counter  1 -3 1)
-    (entity-new-stop-counter  5 -3 1)
-    (entity-new-key           8 -3)
-    (entity-new-wall          9 -3)
-
-    ; 3. row
-    (entity-new-wall                     -9 -2)
-    (for x from -7 to -6 (entity-new-wall x -2))
-    (for x from -3 to -2 (entity-new-wall x -2))
-    (for x from  1 to  2 (entity-new-wall x -2))
-    (for x from  5 to  7 (entity-new-wall x -2))
-    (entity-new-turnstile-ns              8 -2)
-    (entity-new-wall                      9 -2)
-
-    ; 4. row
-    (entity-new-wall         -9 -1)
-    (entity-new-pullable-ns  -4 -1)
-    (entity-new-pullable-ns   0 -1)
-    (entity-new-pullable-ns   4 -1)
-    (entity-new-wall          9 -1)
-
-    ; 5. row
-    (for x from -9 to -5 (entity-new-wall x 0))
-    (for x from -3 to -1 (entity-new-wall x 0))
-    (for x from  1 to  3 (entity-new-wall x 0))
-    (for x from  5 to  7 (entity-new-wall x 0))
-    (entity-new-wall                      9 0)
-
-    ; 6. row
-    (entity-new-exit         -9 1)
-    (entity-new-player       -7 1)
-    (entity-new-slope-sw     -3 1)
-    (entity-new-slope-sw      1 1)
-    (entity-new-slope-sw      5 1)
-    (entity-new-wall          9 1)
-
-    ; 7. row
-    (entity-new-wall         -9 2)
-    (entity-new-wall         -5 2)
-    (entity-new-wall         -1 2)
-    (entity-new-wall          3 2)
-    (entity-new-wall          9 2)
-
-    ; Bottom row
-    (for x from -9 to -5 (entity-new-wall  x 3))
-    (entity-new-pullable-n                -4 3)
-    (for x from -3 to -1 (entity-new-wall  x 3))
-    (entity-new-pullable-n                 0 3)
-    (for x from  1 to  3 (entity-new-wall  x 3))
-    (entity-new-pullable-n                 4 3)
-    (for x from  5 to  9 (entity-new-wall  x 3)))
-
-
-
-    (fn ()
-    ; Top row
-    (for x from -8 to 8 (entity-new-wall x -5))
-
-    ; 2. row
-    (entity-new-wall         -8 -4)
-    (entity-new-wall         -4 -4)
-    (entity-new-wall          1 -4)
-    (entity-new-turnstile-we  4 -4)
-    (entity-new-bomb          8 -4 5)
-
-    ; 3. row
-    (entity-new-bomb         -8 -3 5)
-    (entity-new-player       -7 -3)
-    (entity-new-turnstile-ew -4 -3)
-    (entity-new-wall          1 -3)
-    (entity-new-pass-counter  2 -3 2)
-    (entity-new-turnstile-ew  4 -3)
-    (entity-new-wall          8 -3)
-
-    ; 4. row
-    (entity-new-wall         -8 -2)
-    (entity-new-turnstile-we -4 -2)
-    (entity-new-pass-counter -3 -2 2)
-    (entity-new-pass-counter -1 -2 2)
-    (entity-new-turnstile-ew  1 -2)
-    (entity-new-wall          4 -2)
-    (entity-new-pass-counter  5 -2 3)
-    (entity-new-key           6 -2)
-    (entity-new-bomb          8 -2 5)
-
-    ; 5. row
-    (entity-new-wall                      -8 -1)
-    (for x from -4 to -2 (entity-new-wall  x -1))
-    (entity-new-turnstile-we               1 -1)
-    (entity-new-bomb                       4 -1 5)
-    (entity-new-pass-counter               5 -1 2)
-    (entity-new-wall                       8 -1)
-
-    ; 6. row
-    (entity-new-wall                      -8 0)
-    (entity-new-wall                      -4 0)
-    (entity-new-wall                       1 0)
-    (entity-new-wall                       4 0)
-    (entity-new-wall                       8 0)
-
-    ; 7. row
-    (entity-new-wall                      -8 1)
-    (entity-new-pass-counter              -5 1 2)
-    (entity-new-wall                      -4 1)
-    (entity-new-wall                       1 1)
-    (for x from 4 to 8 (entity-new-wall    x 1))
-
-    ; 8. row
-    (for x from -8 to -7 (entity-new-wall  x 2))
-    (entity-new-turnstile-ns              -6 2)
-    (for x from -5 to -4 (entity-new-wall  x 2))
-    (entity-new-pass-counter              -3 2 1)
-    (entity-new-wall                      -2 2)
-    (for x from 1 to 2 (entity-new-wall    x 2))
-    (entity-new-turnstile-ns               3 2)
-    (entity-new-wall                       4 2)
-    (entity-new-wall                       8 2)
-
-    ; 9. row
-    (entity-new-exit                      -8 3)
-    (entity-new-wall                      -2 3)
-    (entity-new-wall                       1 3)
-    (entity-new-wall                       8 3)
-
-    ; Bottom row
-    (entity-new-slope-en                  -6 4)
-    (entity-new-bomb                      -2 4 20)
-    (entity-new-slope-sw                  -1 4)
-    (for x from 0 to 8 (entity-new-wall    x 4)))
 
 ))
 
@@ -1931,7 +1955,7 @@
                      '(dt [delta time]
                        input [string telling the input, if any: u, d, l, r]) (fn (dt input)
 
-    (if (== input [up]) (do (= current-state [intro-closing]) (tween-level-out)))
+    (if (== input [right]) (do (= current-state [intro-closing]) (tween-level-out)))
 
     true))
 

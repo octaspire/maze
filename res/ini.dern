@@ -1763,14 +1763,14 @@
     (entity-new-wall  5 4)
 
     ; 15. row
-    (entity-new-wall -5 5)
-    (entity-new-player 1 5)
-    (entity-new-wall -5 5)
+    (entity-new-wall   -5 5)
+    (entity-new-player  1 5)
+    (entity-new-wall    5 5)
 
     ; 16. row
-    (entity-new-wall -5 6)
-    (for x from -3 to 2 (entity-new-wall x 6))
-    (entity-new-wall -5 6)
+    (entity-new-wall                     -5 6)
+    (for x from -3 to 2 (entity-new-wall  x 6))
+    (entity-new-wall                      5 6)
 
     ; 17. row
     (entity-new-wall -5 7)

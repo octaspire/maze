@@ -31,14 +31,14 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 {
     size_t const stackLength = octaspire_dern_vm_get_stack_length(vm);
 
-    octaspire_helpers_verify(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
-    octaspire_helpers_verify(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
+    octaspire_helpers_verify_true(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
+    octaspire_helpers_verify_true(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
 
     size_t const numArgs = octaspire_dern_value_get_length(arguments);
 
     if (numArgs < 2)
     {
-        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
             "Builtin 'animation-entity-define' expects at least two arguments. %zu arguments were given.",
@@ -59,11 +59,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 
         if (animNameVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
         {
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return animNameVal;
         }
 
-        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
             "First argument to builtin 'animation-entity-define' must be string value. "
@@ -104,11 +104,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
 
             if (indexVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
             {
-                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
                 return indexVal;
             }
 
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
                 "%zuth argument to builtin 'animation-enity-define' must be integer value. "
@@ -130,7 +130,7 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_define(
         abort();
     }
 
-    octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+    octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
     return octaspire_dern_vm_get_value_true(vm);
 }
 
@@ -141,14 +141,14 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
 {
     size_t const stackLength = octaspire_dern_vm_get_stack_length(vm);
 
-    octaspire_helpers_verify(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
-    octaspire_helpers_verify(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
+    octaspire_helpers_verify_true(arguments->typeTag   == OCTASPIRE_DERN_VALUE_TAG_VECTOR);
+    octaspire_helpers_verify_true(environment->typeTag == OCTASPIRE_DERN_VALUE_TAG_ENVIRONMENT);
 
     size_t const numArgs = octaspire_dern_value_get_length(arguments);
 
     if (numArgs < 5)
     {
-        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
             "Builtin 'animation-custom-define' expects at least five arguments. %zu arguments were given.",
@@ -169,11 +169,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
 
         if (animNameVal->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
         {
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return animNameVal;
         }
 
-        octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+        octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
         return octaspire_dern_vm_create_new_value_error_format(
             vm,
             "First argument to builtin 'animation-custom-define' must be string value. "
@@ -211,11 +211,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
 
             if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
             {
-                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
                 return val;
             }
 
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
                 "%zuth argument to builtin 'animation-custom-define' must be integer value. "
@@ -241,11 +241,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
 
             if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
             {
-                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
                 return val;
             }
 
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
                 "%zuth argument to builtin 'animation-custom-define' must be integer value. "
@@ -272,11 +272,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
 
             if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
             {
-                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
                 return val;
             }
 
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
                 "%zuth argument to builtin 'animation-custom-define' must be integer value. "
@@ -304,11 +304,11 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
 
             if (val->typeTag == OCTASPIRE_DERN_VALUE_TAG_ERROR)
             {
-                octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+                octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
                 return val;
             }
 
-            octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+            octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
             return octaspire_dern_vm_create_new_value_error_format(
                 vm,
                 "%zuth argument to builtin 'animation-custom-define' must be integer value. "
@@ -341,7 +341,7 @@ octaspire_dern_value_t *octaspire_maze_api_animation_custom_define(
         abort();
     }
 
-    octaspire_helpers_verify(stackLength == octaspire_dern_vm_get_stack_length(vm));
+    octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
     return octaspire_dern_vm_get_value_true(vm);
 }
 

@@ -3,11 +3,10 @@ to everything else, but not the external-directory. For unit testing Octaspire M
 uses external/greatest.h that is ISC licensed. This file is not the original version,
 but contains modifications by octaspire. These modifications are also ICS licensed.
 Octaspire Dern uses Octaspire Core and Octaspire Dern that are licensed under
-the Apache License, Version 2.0. For fast hash calculation Octaspire Core uses
-MurmurHash3 that is placed in the public domain. To find SDL2 octaspire_sdl2_utils
-uses a CMake module from external/octaspire_sdl2_utils/external/cmake.
+the Apache License, Version 2.0. To find SDL2 octaspire_sdl2_utils uses a CMake
+module from external/octaspire_sdl2_utils/external/cmake.
 Easing library is based on  Robert Penner's 'penner_easing_as1.txt'.
-All licenses and public domain waiver are listed here:
+All licenses are listed here:
 
 
 ---------------------------------------------------------------------------------------
@@ -88,13 +87,6 @@ License of external/greatest.h
    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ---------------------------------------------------------------------------------------
 
-
----------------------------------------------------------------------------------------
-Public domain waiwer of external/octaspire_core/external/murmur3.*
----------------------------------------------------------------------------------------
-MurmurHash3 was written by Austin Appleby, and is placed in the public
-domain. The author hereby disclaims copyright to this source code.
----------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------
 License of octaspire_easing.c and octaspire_easing.h

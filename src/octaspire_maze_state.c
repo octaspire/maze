@@ -594,7 +594,12 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_remove(
             state,
             octaspire_container_utf8_string_get_c_string(animNameVal->value.string)))
     {
-        abort();
+        octaspire_dern_vm_pop_value(vm, arguments);
+
+        octaspire_helpers_verify_true(
+            stackLength == octaspire_dern_vm_get_stack_length(vm));
+
+        return octaspire_dern_vm_get_value_false(vm);
     }
 
     octaspire_dern_vm_pop_value(vm, arguments);
@@ -629,7 +634,10 @@ octaspire_dern_value_t *octaspire_maze_api_tween_level_out(
 
     if (!octaspire_maze_state_tween_level_out(state))
     {
-        abort();
+        octaspire_helpers_verify_true(
+            stackLength == octaspire_dern_vm_get_stack_length(vm));
+
+        return octaspire_dern_vm_get_value_false(vm);
     }
 
     octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
@@ -664,7 +672,10 @@ octaspire_dern_value_t *octaspire_maze_api_animation_entity_remove_all(
 
     if (!octaspire_maze_state_remove_all_animations(state))
     {
-        abort();
+        octaspire_helpers_verify_true(
+            stackLength == octaspire_dern_vm_get_stack_length(vm));
+
+        return octaspire_dern_vm_get_value_false(vm);
     }
 
     octaspire_helpers_verify_true(stackLength == octaspire_dern_vm_get_stack_length(vm));
@@ -895,7 +906,8 @@ octaspire_maze_state_t *octaspire_maze_state_new(
     char const * const scriptBuffer,
     size_t const scriptBufferLengthInOctets,
     octaspire_memory_allocator_t * const allocator,
-    octaspire_stdio_t * const stdio)
+    octaspire_stdio_t * const stdio,
+    octaspire_dern_vm_config_t const vmConfig)
 {
     octaspire_maze_state_t *self =
         octaspire_memory_allocator_malloc(allocator, sizeof(octaspire_maze_state_t));
@@ -909,7 +921,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
     self->allocator = allocator;
     self->parent    = parent;
 
-    self->vm        = octaspire_dern_vm_new(allocator, stdio);
+    self->vm        = octaspire_dern_vm_new_with_config(allocator, stdio, vmConfig);
 
     if (!self->vm)
     {

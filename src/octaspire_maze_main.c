@@ -456,11 +456,12 @@ void octaspire_maze_print_usage(char const * const binaryName, bool const useCol
     octaspire_maze_print_version(useColors);
     printf("\nusage: %s [option] ...\n", binaryName);
     printf("\nwhere [option] is one of the values listen below\n\n");
-    printf("-f  --fullscreen           : start in fullscreen mode\n");
-    printf("-s  --software-renderer    : use software renderer\n");
-    printf("-c  --color-diagnostics    : use colors on unix like systems\n");
-    printf("-v  --version              : print version information and exit\n");
-    printf("-h  --help                 : print this help message and exit\n");
+    printf("-f  --fullscreen        : start in fullscreen mode\n");
+    printf("-s  --software-renderer : use software renderer\n");
+    printf("-c  --color-diagnostics : use colors on unix like systems\n");
+    printf("-v  --version           : print version information and exit\n");
+    printf("-h  --help              : print this help message and exit\n");
+    printf("-g  --debug             : turn debug mode on\n");
 }
 
 int main(int argc, char *argv[])
@@ -468,6 +469,9 @@ int main(int argc, char *argv[])
     bool useColors             = false;
     bool startInFullscreenMode = false;
     bool useSoftwareRenderer   = false;
+
+    octaspire_dern_vm_config_t vmConfig =
+        octaspire_dern_vm_config_default();
 
     if (argc > 1)
     {
@@ -494,6 +498,10 @@ int main(int argc, char *argv[])
             {
                 octaspire_maze_print_usage(argv[0], useColors);
                 return EXIT_SUCCESS;
+            }
+            else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--debug") == 0)
+            {
+                vmConfig.debugModeOn = true;
             }
             else
             {
@@ -698,7 +706,8 @@ int main(int argc, char *argv[])
             (char const * const)octaspire_maze_ini,
             octaspire_maze_ini_len,
             allocator,
-            stdio));
+            stdio,
+            vmConfig));
 
     Uint64 timeNow   = SDL_GetPerformanceCounter();
     Uint64 timeLast  = 0;

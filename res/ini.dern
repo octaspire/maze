@@ -49,8 +49,6 @@
     (= pass-or-fail-level-pending false)
     (= active-exit-x nil)
     (= active-exit-y nil)
-    ; TODO why this doesn't work?
-    ;(for i from 0 to (* level-width level-width) (= (nth level i) 'name []))
     (for i in level (= i 'name []))
     (= pass-counters (hash-map))
     ))
@@ -59,13 +57,13 @@
     (+ (+ x level-hwidth) (* (+ y level-hwidth) level-width))))
 
 (define level-set-slot [level-set-slot] '(x [x] y [y] slot [slot]) (fn (x y slot)
-    (= (nth (coordinates-to-index x y) level) slot)))
+    (= (ln@ level (coordinates-to-index x y)) slot)))
 
 (define level-set-slot-to-empty [level-set-slot] '(x [x] y [y]) (fn (x y)
     (= (level-get-slot x y) 'name [])))
 
 (define level-get-slot [level-get-slot] '(x [x] y [y]) (fn (x y)
-    (nth (coordinates-to-index x y) level)))
+    (ln@ level (coordinates-to-index x y))))
 
 (define level-is-slot-empty? [level-is-slot-empty?] '(x [x] y [y]) (fn (x y)
     (== [] (find (level-get-slot x y) 'name))))
@@ -459,7 +457,7 @@
         (= slot 'player-was-on-side side))))
 
 (define ensure-pullable-in-updatables [...] '(name [name] slot [slot]) (fn (name slot)
-    (for i in level-updatable-indices (if (== (nth 0 i) name) (return nil)))
+    (for i in level-updatable-indices (if (== (ln@ i 0) name) (return nil)))
     (+= level-updatable-indices name slot)))
 
 (define move-pullable-from-to [move pullable] '(fx [fx] fy [fy] tx [tx] ty [ty]) (fn (fx fy tx ty)
@@ -1873,7 +1871,7 @@
 (define number-of-levels [number of levels] '() (fn () (len levels)))
 
 (define level-load [load level from vector index] '(levelNumber [1..n]) (fn (levelNumber)
-    (define f [f] (nth (- levelNumber 1) levels))
+    (define f [f] (ln@ levels (- levelNumber 1)))
     ((eval f))
     (= level-current-number levelNumber)
 ))
@@ -1914,7 +1912,7 @@
 
     (if (!= 0 (len pending-input))
         (do
-            (= result (nth 0 pending-input))
+            (= result (cp@ pending-input 0))
             (pop-front pending-input)))
 
     result))
@@ -2004,16 +2002,16 @@
     (define tmpPassCounters [prevent problems of modifying during iteration] nil)
     (= tmpPassCounters pass-counters)
     (for i in tmpPassCounters
-        (pass-counter-update (nth 1 i) dt))
+        (pass-counter-update (ln@ i 1) dt))
 
     (define tmpLUI [prevent problems of modifying during iteration] nil)
     (= tmpLUI level-updatable-indices)
     (for i in tmpLUI
-        (define zeroth [zeroth] (nth 0 i))
+        (define zeroth [zeroth] (ln@ i 0))
         (select
-            (starts-with? zeroth [bomb])          (bomb-update             (nth 1 i) dt)
-            (starts-with? zeroth [stopper])       (stopper-update          (nth 1 i) dt)
-            (starts-with? zeroth [pullable-])     (pullable-anytype-update (nth 1 i) dt)))
+            (starts-with? zeroth [bomb])          (bomb-update             (ln@ i 1) dt)
+            (starts-with? zeroth [stopper])       (stopper-update          (ln@ i 1) dt)
+            (starts-with? zeroth [pullable-])     (pullable-anytype-update (ln@ i 1) dt)))
 
     true))
 

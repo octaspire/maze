@@ -7,6 +7,7 @@
 #include <octaspire/sdl2-utils/octaspire_sdl2_texture.h>
 #include <octaspire/core/octaspire_memory.h>
 #include <octaspire/core/octaspire_stdio.h>
+#include "octaspire/dern/octaspire_dern_vm.h"
 #include "octaspire/maze/octaspire_maze_input.h"
 
 #ifdef __cplusplus
@@ -22,7 +23,8 @@ octaspire_maze_state_t *octaspire_maze_state_new(
     char const * const scriptBuffer,
     size_t const scriptBufferLengthInOctets,
     octaspire_memory_allocator_t * const allocator,
-    octaspire_stdio_t * const stdio);
+    octaspire_stdio_t * const stdio,
+    octaspire_dern_vm_config_t const vmConfig);
 
 void octaspire_maze_state_release(octaspire_maze_state_t *self);
 

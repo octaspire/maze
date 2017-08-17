@@ -27,7 +27,7 @@ even in backwards incompatible manner.
 == See Maze in action
 
 ++++
-<iframe width="853" height="480" src="https://www.youtube.com/embed/rPrkX2QV-Xg" frameborder="0" allowfullscreen></iframe>
+<iframe width="853" height="480" src="https://www.youtube.com/embed/IohkzbmQDoo" frameborder="0" allowfullscreen></iframe>
 ++++
 
 
@@ -38,7 +38,7 @@ The amalgamated source release is the recommended way of using Maze, if you don'
 modify Maze itself. To use the amalgamated release, you will need only a C compiler,
 C standard library supporting C99 and the SDL2 library.
 
-=== Linux
+=== Linux, Haiku and FreeBSD
 
 :source-highlighter: pygments
 :pygments-style: colorful
@@ -53,6 +53,11 @@ sha512sum -c checksums
 sh how-to-build/YOUR_PLATFORM_NAME_HERE.XX
 ----
 
-replace *YOUR_PLATFORM_NAME_HERE.XX* with *linux.sh*.
+replace *YOUR_PLATFORM_NAME_HERE.XX* with *linux.sh*, *haiku.sh* or *FreeBSD.sh*.
 More scripts for different platforms will be added later.
+
+
+== Controls
+
+TODO
 

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(octaspire-maze C)
 
 set(OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR 0)
-set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 70)
+set(OCTASPIRE_MAZE_CONFIG_VERSION_MINOR 74)
 set(OCTASPIRE_MAZE_CONFIG_VERSION_PATCH 0)
 
 message("== Building ${PROJECT_NAME} ${OCTASPIRE_MAZE_CONFIG_VERSION_MAJOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_MINOR}.${OCTASPIRE_MAZE_CONFIG_VERSION_PATCH}")
@@ -144,3 +144,8 @@ if(NOT TARGET octaspire-maze-test-runner AND OCTASPIRE_MAZE_UNIT_TEST)
     add_subdirectory(test)
 endif(NOT TARGET octaspire-maze-test-runner AND OCTASPIRE_MAZE_UNIT_TEST)
 
+
+add_custom_target(
+    book-maze
+    COMMAND asciidoctor --backend=html5 "${CMAKE_CURRENT_SOURCE_DIR}/doc/book/Octaspire_Maze_Manual.adoc"
+    COMMAND asciidoctor-pdf -a source-highlighter=pygments "${CMAKE_CURRENT_SOURCE_DIR}/doc/book/Octaspire_Maze_Manual.adoc")

@@ -1,0 +1,58 @@
+Octaspire Maze Manual
+=====================
+:author: www.octaspire.com
+:lang: en
+:toc:
+:source-highlighter: pygments
+
+Documentation for Octaspire Maze puzzle game version 0.70.0
+
+== About
+
+++++
+<a href="https://travis-ci.org/octaspire/maze"><img src="https://travis-ci.org/octaspire/maze.svg?branch=master" alt="Build status" /></a>
+<a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License badge" /></a>
+++++
+
+Octaspire Maze is a puzzle game written in *Octaspire Dern* programming language with
+some standard C99. It uses *Octaspire Core* and *SDL2* libraries. It should run on all
+platforms that have SDL2 available, even on slower hardware - it is developed
+from the start in Raspberry Pi 2.
+
+Maze uses
+http://semver.org[Semantic Versioning 2.0.0] version numbering scheme.
+As long as the MAJOR version number is zero anything can change at any time,
+even in backwards incompatible manner.
+
+== See Maze in action
+
+++++
+<iframe width="853" height="480" src="https://www.youtube.com/embed/rPrkX2QV-Xg" frameborder="0" allowfullscreen></iframe>
+++++
+
+
+
+== Building the amalgamated source release
+
+The amalgamated source release is the recommended way of using Maze, if you don't need to
+modify Maze itself. To use the amalgamated release, you will need only a C compiler,
+C standard library supporting C99 and the SDL2 library.
+
+=== Linux
+
+:source-highlighter: pygments
+:pygments-style: colorful
+:pygments-linenums-mode: inline
+[source,bash]
+----
+curl -O octaspire.com/maze/release.tar.bz2
+tar jxf release.tar.bz2
+cd release/*
+curl -O https://octaspire.github.io/maze/checksums
+sha512sum -c checksums
+sh how-to-build/YOUR_PLATFORM_NAME_HERE.XX
+----
+
+replace *YOUR_PLATFORM_NAME_HERE.XX* with *linux.sh*.
+More scripts for different platforms will be added later.
+

@@ -113,7 +113,7 @@ of this amalgamated source release can be downloaded from:\n\
 Directory 'documentation' contains the manual 'Octaspire Maze Manual'.\n\
 \n\
 More information about Maze can be found from the homepage:\n\
-octaspire.com/dern and https://octaspire.io/maze\n" > "$PROJECT_PATH/etc/release/version-$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH/README"
+octaspire.com/maze and https://octaspire.io/maze\n" > "$PROJECT_PATH/etc/release/version-$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH/README"
     RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
 
     echo "\nCopying amalgamation...\n--------------------------\n"

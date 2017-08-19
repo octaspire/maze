@@ -419,14 +419,18 @@ void octaspire_maze_print_message(
 
 void octaspire_maze_print_version(bool const useColors)
 {
+    printf("  ");
     octaspire_maze_print_message_c_str(
         OCTASPIRE_MAZE_CONFIG_VERSION_STR,
         OCTASPIRE_MAZE_MESSAGE_INFO,
         useColors);
+
+    printf("\n");
 }
 
 void octaspire_maze_print_banner(bool const useColors)
 {
+    printf("\n");
     if (useColors)
     {
         for (size_t i = 0; i < octaspire_maze_banner_color_len; ++i)
@@ -443,9 +447,9 @@ void octaspire_maze_print_banner(bool const useColors)
     }
 
     octaspire_maze_print_message_c_str(
-        "Licensed under the Apache License, Version 2.0\n"
-        "Distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES\n"
-        "OR CONDITIONS OF ANY KIND.\n",
+        "  \n"
+        "  Licensed under the Apache License, Version 2.0. Distributed on\n"
+        "  an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND.\n",
         OCTASPIRE_MAZE_MESSAGE_INFO, useColors);
 
 }
@@ -458,6 +462,7 @@ void octaspire_maze_print_usage(char const * const binaryName, bool const useCol
     printf("\nwhere [option] is one of the values listen below\n\n");
     printf("-f  --fullscreen        : start in fullscreen mode\n");
     printf("-s  --software-renderer : use software renderer\n");
+    printf("-j  --disable-joystick  : do not use controllers\n");
     printf("-c  --color-diagnostics : use colors on unix like systems\n");
     printf("-v  --version           : print version information and exit\n");
     printf("-h  --help              : print this help message and exit\n");
@@ -469,6 +474,7 @@ int main(int argc, char *argv[])
     bool useColors             = false;
     bool startInFullscreenMode = false;
     bool useSoftwareRenderer   = false;
+    bool disableJoystick       = false;
 
     octaspire_dern_vm_config_t vmConfig =
         octaspire_dern_vm_config_default();
@@ -488,6 +494,10 @@ int main(int argc, char *argv[])
             else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--software-renderer") == 0)
             {
                 useSoftwareRenderer = true;
+            }
+            else if (strcmp(argv[i], "-j") == 0 || strcmp(argv[i], "--disable-joystick") == 0)
+            {
+                disableJoystick = true;
             }
             else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
             {
@@ -534,7 +544,14 @@ int main(int argc, char *argv[])
 
     octaspire_dern_vm_set_user_data(vm, game);
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+    Uint32 initFlags = SDL_INIT_VIDEO;
+
+    if (!disableJoystick)
+    {
+        initFlags |= SDL_INIT_JOYSTICK;
+    }
+
+    if (SDL_Init(initFlags) < 0)
     {
         octaspire_maze_print_message_c_str(
             "SDL2 init failed:",

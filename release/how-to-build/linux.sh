@@ -18,7 +18,7 @@ cat << EnDoFmEsSaGe
 EnDoFmEsSaGe
 echoToDefs
 read -r BUILDSTR <<'EOF'
-gcc -O2 -std=c99 -Wall -Wextra -DOCTASPIRE_MAZE_AMALGAMATED_IMPLEMENTATION octaspire-maze-amalgamated.c -o octaspire-maze `pkg-config --cflags --libs sdl2` -lm
+gcc -O2 -std=c99 -Wall -Wextra -DOCTASPIRE_MAZE_AMALGAMATED_IMPLEMENTATION octaspire-maze-amalgamated.c -o octaspire-maze `sdl2-config --cflags --libs` -lm
 EOF
 echo $BUILDSTR
 eval $BUILDSTR

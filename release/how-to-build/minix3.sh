@@ -36,7 +36,7 @@ printf "\nDone.\n$GREEN"
 echo   "=================================================================="
 echo   "Run the game like this:"
 echo   "=================================================================="
-printf "%b1)%b ./octaspire-maze --disable-joystick\n" $YELLOW $GREEN
+printf "%b1)%b ./octaspire-maze --disable-joystick --software-renderer\n" $YELLOW $GREEN
 echo   "=================================================================="
 echoToDefs
 

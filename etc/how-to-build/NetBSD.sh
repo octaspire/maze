@@ -22,6 +22,11 @@ cat << EnDoFmEsSaGe
                              --enable-directfb-shared
                  gmake
                  sudo gmake install
+
+    (If you have installed SDL2 with 'sudo pkgin install SDL2' you might
+    have to remove it first by running 'sudo pkgin remove SDL2' and then
+    install SDL2 manually. This is the way I was able to get SDL2 to work
+    in NetBSD at the moment.)
 -------------------------------------------------------------------------------
 EnDoFmEsSaGe
 echoToDefs

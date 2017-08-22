@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-YELLOW="$(tput setaf 3 ; tput bold)"
-GREEN="$(tput setaf 2 ; tput bold)"
-NOCOLOR="$(tput setaf 9 ; tput sgr0)"
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+NOCOLOR='\033[0m'
 
 echoToDefs() { printf "$NOCOLOR\n" ; }
 

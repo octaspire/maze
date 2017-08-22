@@ -16,9 +16,9 @@ cat << EnDoFmEsSaGe
        - NetBSD: curl -O http://www.libsdl.org/release/SDL2-2.0.5.tar.gz
                  tar zxf SDL2-2.0.5.tar.gz
                  cd SDL2-2.0.5
-                 ./configure --disable-joystick       \
-                             --disable-audio          \
-                             --disable-x11-shared     \
+                 ./configure --disable-joystick       \\
+                             --disable-audio          \\
+                             --disable-x11-shared     \\
                              --enable-directfb-shared
                  gmake
                  sudo gmake install

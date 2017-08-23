@@ -38,7 +38,7 @@ The amalgamated source release is the recommended way of using Maze, if you don'
 modify Maze itself. To use the amalgamated release, you will need only a C compiler,
 C standard library supporting C99 and the SDL2 library.
 
-=== Linux, Haiku, FreeBSD, OpenBSD and MINIX 3
+=== Linux, Haiku, FreeBSD, OpenBSD, MINIX 3, OpenIndiana, NetBSD, DragonFlyBSD and MidnightBSD
 
 :source-highlighter: pygments
 :pygments-style: colorful
@@ -54,7 +54,8 @@ sh how-to-build/YOUR_PLATFORM_NAME_HERE.XX
 ----
 
 replace *YOUR_PLATFORM_NAME_HERE.XX* with *linux.sh*, *haiku.sh*, *FreeBSD.sh*,
-*OpenBSD.sh* or *minix3.sh*. More scripts for different platforms will be added later.
+*OpenBSD.sh*, *minix3.sh*, *OpenIndiana.sh*, *NetBSD.sh*, *DragonFlyBSD.sh* or
+*MidnightBSD.sh*. More scripts for different platforms will be added later.
 
 
 == Controls

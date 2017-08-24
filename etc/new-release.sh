@@ -68,8 +68,10 @@ create_new_version() {
 
 
 
-    echo "\nRemoving old release directory and archive...\n--------------------------\n"
+    echo "\nRemoving old release directory, archive and signature...\n--------------------------\n"
     rm -rf "$PROJECT_PATH/etc/release.tar.bz2"
+    RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
+    rm -rf "$PROJECT_PATH/etc/release.tar.bz2.sig"
     RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
     rm -rf "$PROJECT_PATH/etc/release"
     RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
@@ -138,6 +140,10 @@ octaspire.com/maze and https://octaspire.io/maze\n" > "$PROJECT_PATH/etc/release
     cd "$PROJECT_PATH/etc/"
     RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
     tar --bzip2 -cf "release.tar.bz2" release
+    RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
+
+    echo "\nSigning release.tar.bz2...\n--------------------------\n"
+    gpg -u 9bd2ccd560e9e29c --output "release.tar.bz2.sig" --detach-sig release.tar.bz2
     RETVAL=$?; if [ $RETVAL != 0 ]; then exit $RETVAL; fi
 
     echo "\nRemoving $PROJECT_PATH/release/ and creating it again with updates\n--------------------------\n"

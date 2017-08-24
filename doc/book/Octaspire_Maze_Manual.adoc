@@ -5,13 +5,14 @@ Octaspire Maze Manual
 :toc:
 :source-highlighter: pygments
 
-Documentation for Octaspire Maze puzzle game version 0.70.0
+Documentation for Octaspire Maze puzzle game version 0.89.1
 
 == About
 
 ++++
 <a href="https://travis-ci.org/octaspire/maze"><img src="https://travis-ci.org/octaspire/maze.svg?branch=master" alt="Build status" /></a>
-<a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License badge" /></a>
+<a href="https://choosealicense.com/licenses/apache-2.0/">
+<img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="" /></a>
 ++++
 
 Octaspire Maze is a puzzle game written in *Octaspire Dern* programming language with

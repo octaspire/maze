@@ -7,6 +7,7 @@
 #include <octaspire/core/octaspire_memory.h>
 #include <octaspire/core/octaspire_helpers.h>
 #include <octaspire/sdl2-utils/octaspire_sdl2_texture.h>
+#include <octaspire/sdl2-utils/octaspire_sdl2_timer.h>
 #include <octaspire/sdl2-utils/octaspire_sdl2_animation.h>
 #include <octaspire/easing/octaspire_easing.h>
 #include "octaspire/maze/octaspire_maze_game.h"
@@ -726,19 +727,19 @@ int main(int argc, char *argv[])
             stdio,
             vmConfig));
 
-    Uint64 timeNow   = SDL_GetPerformanceCounter();
-    Uint64 timeLast  = 0;
-    double deltaTime = 0;
+    octaspire_sdl2_timer_t *timer = octaspire_sdl2_timer_new(allocator);
 
     double origoX = 0;
     double origoY = 0;
 
+    size_t const targetFPS = 20;
+    double const targetFrameDuration = 1.0 / targetFPS;
+
     while (running)
     {
-        timeLast = timeNow;
-        timeNow = SDL_GetPerformanceCounter();
-
-        deltaTime = (((timeNow - timeLast) * 1000 / (double)SDL_GetPerformanceFrequency())) * 0.001;
+        octaspire_sdl2_timer_update(timer);
+        double const dt = octaspire_sdl2_timer_get_seconds(timer);
+        octaspire_sdl2_timer_reset(timer);
 
         octaspire_maze_input_t input = OCTASPIRE_MAZE_INPUT_NONE;
 
@@ -850,7 +851,7 @@ int main(int argc, char *argv[])
 
         SDL_GetWindowSize(window, &winW, &winH);
 
-        octaspire_maze_game_update(game, deltaTime, input, winW, winH);
+        octaspire_maze_game_update(game, dt, input, winW, winH);
 
         origoX = winW * 0.5;
         origoY = winH * 0.5;
@@ -859,7 +860,23 @@ int main(int argc, char *argv[])
         SDL_RenderClear(renderer);
         octaspire_maze_game_render(game, renderer, texture, origoX, origoY);
         SDL_RenderPresent(renderer);
+
+        octaspire_sdl2_timer_update(timer);
+        double const currentFrameDuration = octaspire_sdl2_timer_get_seconds(timer);
+
+        if (targetFrameDuration > currentFrameDuration)
+        {
+            double const delayInSeconds = targetFrameDuration - currentFrameDuration;
+
+            if (delayInSeconds > 0)
+            {
+                SDL_Delay((Uint32)(delayInSeconds * 1000.0));
+            }
+        }
     }
+
+    octaspire_sdl2_timer_release(timer);
+    timer = 0;
 
     SDL_JoystickClose(controller);
     controller = 0;

@@ -195,6 +195,7 @@ EnDoFmEsSaGe
 concat_file "../external/octaspire_dern/etc/octaspire_dern_amalgamated.c"
 concat_file "../external/octaspire_easing/etc/octaspire_easing_amalgamated.c"
 concat_file "../external/octaspire_sdl2_utils/include/octaspire/sdl2-utils/octaspire_sdl2_texture.h"
+concat_file "../external/octaspire_sdl2_utils/include/octaspire/sdl2-utils/octaspire_sdl2_timer.h"
 concat_file "../external/octaspire_sdl2_utils/include/octaspire/sdl2-utils/octaspire_sdl2_animation.h"
 concat_file "../external/octaspire_maze_banner_color.h"
 concat_file "../external/octaspire_maze_banner_white.h"
@@ -253,6 +254,7 @@ EnDoFmEsSaGe
 
 
 concat_file "../external/octaspire_sdl2_utils/src/octaspire_sdl2_texture.c"
+concat_file "../external/octaspire_sdl2_utils/src/octaspire_sdl2_timer.c"
 concat_file "../external/octaspire_sdl2_utils/src/octaspire_sdl2_animation.c"
 
 concat_file "../src/octaspire_maze_state.c"

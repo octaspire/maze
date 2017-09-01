@@ -22,5 +22,5 @@ before_script:
 
 script:
     - how-to-build/linux.sh
-    - ./octaspire-maze-test-runner
+    - ./octaspire-maze -h
 

@@ -1,12 +1,12 @@
 This is amalgamated single file source release for Octaspire Maze puzzle game
-version 0.91.2. File 'octaspire-maze-amalgamated.c'
+version 0.91.3. File 'octaspire-maze-amalgamated.c'
 is all that is needed; it has no other dependencies than a C compiler and
 standard library supporting C99 and SDL2 library.
 
 SHA-512 checksums for this and older releases can be found from:
 https://octaspire.github.io/maze/
-If you want to check this release, download checksums for version 0.91.2 from:
-https://octaspire.github.io/maze/checksums-0.91.2
+If you want to check this release, download checksums for version 0.91.3 from:
+https://octaspire.github.io/maze/checksums-0.91.3
 
 Building instructions for all supported platforms (and scripts for building
 automatically) can be found in directory 'how-to-build'. Look for a file that

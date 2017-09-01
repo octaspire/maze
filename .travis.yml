@@ -15,7 +15,7 @@ before_install:
     - tar xzf SDL2-2.0.5.tar.gz
 
 install:
-    - (cd SDL2-2.05 && ./configure && make && sudo make install)
+    - (cd SDL2-2.0.5 && ./configure && make && sudo make install)
 
 before_script:
     - cd release/

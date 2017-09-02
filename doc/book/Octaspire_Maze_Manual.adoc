@@ -5,7 +5,7 @@ Octaspire Maze Manual
 :toc:
 :source-highlighter: pygments
 
-Documentation for Octaspire Maze puzzle game version 0.91.3
+Documentation for Octaspire Maze puzzle game version 0.92.0
 
 == About
 

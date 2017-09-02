@@ -21,6 +21,6 @@ before_script:
     - cd release/
 
 script:
-    - how-to-build/linux.sh
+    - how-to-build/linux.sh $CC
     - ./octaspire-maze -h
 

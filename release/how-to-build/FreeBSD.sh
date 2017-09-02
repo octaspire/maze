@@ -4,7 +4,13 @@ YELLOW="$(tput setaf 3 ; tput bold)"
 GREEN="$(tput setaf 2 ; tput bold)"
 NOCOLOR="$(tput setaf 9 ; tput sgr0)"
 
+CC=clang
+COVERAGE=""
+
 echoToDefs() { printf "$NOCOLOR\n" ; }
+
+if [ "$#" -ge "1" ]; then CC=$1; fi
+if [ "$2" = "--coverage" ]; then COVERAGE=$2; fi
 
 printf "$YELLOW\n"
 cat << EnDoFmEsSaGe
@@ -17,8 +23,11 @@ cat << EnDoFmEsSaGe
 -------------------------------------------------------------------------------
 EnDoFmEsSaGe
 echoToDefs
-read -r BUILDSTR <<'EOF'
-clang -O2 -std=c99 -Wall -Wextra -DOCTASPIRE_MAZE_AMALGAMATED_IMPLEMENTATION octaspire-maze-amalgamated.c -o octaspire-maze `sdl2-config --cflags --libs` -lm
+read -r BUILDSTR <<EOF
+$CC -O2 -std=c99 -Wall -Wextra -DOCTASPIRE_MAZE_AMALGAMATED_IMPLEMENTATION \
+    $COVERAGE                                                              \
+    octaspire-maze-amalgamated.c -o octaspire-maze                         \
+    \`sdl2-config --cflags --libs\` -lm
 EOF
 echo $BUILDSTR
 eval $BUILDSTR

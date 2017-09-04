@@ -965,6 +965,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_shake,
         5,
         "Shake level",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();
@@ -976,6 +977,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_animation_entity_new,
         5,
         "Add new animation to the scene",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();
@@ -987,6 +989,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_animation_custom_new,
         5,
         "Add new animation to the scene",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();
@@ -998,6 +1001,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_animation_entity_remove,
         1,
         "Remove animation from the scene",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();
@@ -1009,6 +1013,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_animation_entity_remove_all,
         5,
         "Remove all animations from the scene",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();
@@ -1022,6 +1027,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_tween_level_out,
         0,
         "Tween level out",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();
@@ -1033,6 +1039,7 @@ octaspire_maze_state_t *octaspire_maze_state_new(
         octaspire_maze_api_animation_entity_set_position,
         5,
         "Set new position for an animation on the scene",
+        false,
         octaspire_dern_vm_get_global_environment(self->vm)->value.environment))
     {
         abort();

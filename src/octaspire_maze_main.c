@@ -686,6 +686,7 @@ int main(int argc, char *argv[])
         octaspire_maze_api_animation_entity_define,
         5,
         "Create new kind of animation from texture atlas with fixed sprite sizes",
+        false,
         octaspire_dern_vm_get_global_environment(vm)->value.environment))
     {
         abort();
@@ -697,6 +698,7 @@ int main(int argc, char *argv[])
         octaspire_maze_api_animation_custom_define,
         5,
         "Create new kind of animation from texture atlas with given sprite sizes",
+        false,
         octaspire_dern_vm_get_global_environment(vm)->value.environment))
     {
         abort();

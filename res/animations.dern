@@ -57,21 +57,24 @@
 ;                                              x y    w   h
 (animation-custom-define [help]                4 82   481 418)
 
-(define create-stop-counter-i [.] '(i [i]) (fn (i)
-    (define id [id] (string-format [stop-counter-{}] i))
-    (animation-entity-define id (+ 42 i))))
+(define create-stop-counter-i as (fn (i)
+    (define id as (string-format [stop-counter-{}] i) [id])
+    (animation-entity-define id (+ 42 i)))
+  [.] '(i [i]) howto-no)
 
 (for i from 1 to 10 (create-stop-counter-i i))
 
-(define create-pass-counter-i [.] '(i [i]) (fn (i)
-    (define id [id] (string-format [pass-counter-{}] i))
-    (animation-entity-define id (+ 31 i))))
+(define create-pass-counter-i as (fn (i)
+    (define id as (string-format [pass-counter-{}] i)[id])
+    (animation-entity-define id (+ 31 i)))
+  [.] '(i [i]) howto-no)
 
 (for i from 1 to 10 (create-pass-counter-i i))
 
-(define create-bomb-i [.] '(i [i]) (fn (i)
-    (define id [id] (string-format [bomb-{}] i))
-    (animation-entity-define id (+ 52 i))))
+(define create-bomb-i as (fn (i)
+    (define id as (string-format [bomb-{}] i) [id])
+    (animation-entity-define id (+ 52 i)))
+  [.] '(i [i]) howto-no)
 
 (for i from 1 to 27 (create-bomb-i i))
 

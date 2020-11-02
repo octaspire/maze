@@ -3,9 +3,9 @@
 
 Game written in programming languages Dern and standard C99.
 
-*This project is deprecated*. Please use the new version of this game
-from inside the Octaspire Dern project. *It is written fully
-in Octaspire Dern*. This project is written partially in C99
-and is not finished. *After it becase possible to write this
+**This project is deprecated**. Please use the new version of this game
+from inside the Octaspire Dern project. **It is written fully
+in Octaspire Dern**. This project is written partially in C99
+and is not finished. **After it becase possible to write this
 game using only Dern - without help from C - this project has
-not been updated*.
+not been updated**.
